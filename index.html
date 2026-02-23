@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YourAI — Your Personal AI Universe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #060608;
+      --surface: #0f0f14;
+      --border: #1e1e2a;
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --text: #f0f0f5;
+      --muted: #6b6b80;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background orbs */
+    .orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      animation: orbFloat 8s ease-in-out infinite alternate;
+    }
+    .orb1 { width: 500px; height: 500px; background: #7c3aed; top: -150px; left: -100px; animation-delay: 0s; }
+    .orb2 { width: 400px; height: 400px; background: #06b6d4; bottom: -100px; right: -100px; animation-delay: -3s; }
+    .orb3 { width: 300px; height: 300px; background: #8b5cf6; top: 40%; left: 50%; animation-delay: -5s; }
+    @keyframes orbFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(6, 6, 8, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      color: #a78bfa;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #a78bfa, #06b6d4, #7c3aed);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s ease infinite alternate;
+    }
+    @keyframes gradientShift {
+      from { background-position: 0%; }
+      to { background-position: 100%; }
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 64px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(124, 58, 237, 0.6); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-secondary:hover { border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
+
+    /* Feature pills */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .pill span:first-child { font-size: 0.95rem; }
+
+    /* Features section */
+    .features {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      color: #a78bfa;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .section-desc {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 56px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .feature-card:hover {
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    /* Auth section */
+    .auth-section {
+      padding: 80px 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 440px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .auth-tabs {
+      display: flex;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .auth-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .auth-card .subtitle {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-group input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus { border-color: #7c3aed; }
+    .form-group input::placeholder { color: var(--muted); }
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      margin-top: 8px;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.35);
+    }
+    .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .auth-footer a {
+      color: #a78bfa;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+    footer strong { color: #a78bfa; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile nav */
+    @media (max-width: 640px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .auth-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <nav>
+    <div class="nav-logo">
+      <div class="logo-mark">Y</div>
+      YourAI
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#auth">Get Started</a>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">Launch App</button>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Powered by Gemini AI · Free to use
+      </div>
+      <h1>Your Personal<br><span class="gradient-text">AI Universe</span></h1>
+      <p>Chat, research, create images, draft emails, write video scripts — all with an AI that knows you personally.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">Get Started Free →</button>
+        <button class="btn-secondary" onclick="window.location.href='dashboard.html'">Open Dashboard</button>
+      </div>
+      <div class="feature-pills">
+        <div class="pill"><span>💬</span> Smart Chat</div>
+        <div class="pill"><span>🔍</span> Research Mode</div>
+        <div class="pill"><span>🎨</span> Image Generation</div>
+        <div class="pill"><span>📧</span> Email Drafting</div>
+        <div class="pill"><span>🎬</span> Video Scripts</div>
+        <div class="pill"><span>🎤</span> Voice Input</div>
+        <div class="pill"><span>👤</span> Personal Profile</div>
+        <div class="pill"><span>🌙</span> Dark Mode</div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+      <p class="section-label">Everything you need</p>
+      <h2 class="section-title">Not just a chatbot — <span class="gradient-text">your AI</span></h2>
+      <p class="section-desc">Combines the best of ChatGPT, Perplexity, and Gemini into one personal AI universe.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(124,58,237,0.15);">💬</div>
+          <h3>AI Chat with Memory</h3>
+          <p>Powered by Google Gemini. Conversations saved locally. Switch between Gemini Flash, Pro, and 2.0 models. Streaming responses with markdown rendering.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(6,182,212,0.15);">🔍</div>
+          <h3>Research Mode</h3>
+          <p>Ask deep research questions. Get structured answers with summaries, key points, and follow-up suggestions — like Perplexity AI.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(16,185,129,0.15);">🎨</div>
+          <h3>Image Generation</h3>
+          <p>Create stunning images from text prompts. Multiple art styles available. Download instantly. No extra API keys needed.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(245,158,11,0.15);">📧</div>
+          <h3>Email & Content Creation</h3>
+          <p>Draft professional emails, social posts, cover letters, and more. Set tone, style, and context for perfect results every time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(239,68,68,0.15);">🎤</div>
+          <h3>Voice Conversations</h3>
+          <p>Speak your messages with Web Speech API. AI responses read aloud. Full hands-free voice call mode for natural conversations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(167,139,250,0.15);">👤</div>
+          <h3>Your Personal Profile</h3>
+          <p>Feed YourAI your bio, social links, and interests. It learns who you are and tailors every response to your unique personality and goals.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Auth Section -->
+    <section class="auth-section" id="auth">
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create Account</button>
+        </div>
+
+        <!-- Login -->
+        <div id="loginForm">
+          <h2>Welcome back</h2>
+          <p class="subtitle">Enter your name to access your personal AI workspace.</p>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" id="loginName" placeholder="e.g. Alex Johnson" required autocomplete="off">
+            </div>
+            <button type="submit" class="submit-btn">Open My Dashboard →</button>
+          </form>
+          <div class="auth-footer">Don't have an account? <a onclick="switchTab('signup')">Create one</a></div>
+        </div>
+
+        <!-- Signup -->
+        <div id="signupForm" style="display:none">
+          <h2>Get started for free</h2>
+          <p class="subtitle">Create your YourAI profile. Your AI will learn about you and improve over time.</p>
+          <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" id="signupName" placeholder="e.g. Alex Johnson" required>
+            </div>
+            <div class="form-group">
+              <label>Short Bio (optional)</label>
+              <input type="text" id="signupBio" placeholder="e.g. Developer, curious mind, coffee lover">
+            </div>
+            <button type="submit" class="submit-btn">Create My AI Profile →</button>
+          </form>
+          <div class="auth-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built with ❤️ using <strong>YourAI</strong> · Powered by Google Gemini · Open Source
+  </footer>
+
+  <script>
+    // Check existing session
+    (function() {
+      const user = localStorage.getItem('yourAI_user');
+      if (user) {
+        try {
+          const parsed = JSON.parse(user);
+          if (parsed && parsed.name) {
+            window.location.href = 'dashboard.html';
+          }
+        } catch(e) {}
+      }
+    })();
+
+    function switchTab(tab) {
+      document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+      document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+      document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('loginName').value.trim();
+      if (!name) return;
+      const existing = JSON.parse(localStorage.getItem('yourAI_user') || '{}');
+      const user = { ...existing, name, lastLogin: Date.now() };
+      localStorage.setItem('yourAI_user', JSON.stringify(user));
+      window.location.href = 'dashboard.html';
+    }
+
+    function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const bio = document.getElementById('signupBio').value.trim();
+      if (!name) return;
+      const user = {
+        name,
+        bio,
+        createdAt: Date.now(),
+        lastLogin: Date.now(),
+        profileComplete: false,
+        conversations: [],
+        settings: { theme: 'dark', model: 'gemini-2.0-flash' }
+      };
+      localStorage.setItem('yourAI_user', JSON.stringify(user));
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>
