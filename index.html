@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YourAI — Your Personal AI Universe</title>
+  <title>YourAI — Your Personal AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #060608;
-      --surface: #0f0f14;
-      --border: #1e1e2a;
-      --accent: #7c3aed;
-      --accent2: #06b6d4;
-      --text: #f0f0f5;
-      --muted: #6b6b80;
-      --radius: 14px;
+      --bg: #0a0a0a;
+      --surface: #111;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --muted: #888;
+      --dim: #555;
+      --radius: 10px;
     }
 
     body {
@@ -28,29 +28,10 @@
       overflow-x: hidden;
     }
 
-    /* Animated background orbs */
-    .orbs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.25;
-      animation: orbFloat 8s ease-in-out infinite alternate;
-    }
-    .orb1 { width: 500px; height: 500px; background: #7c3aed; top: -150px; left: -100px; animation-delay: 0s; }
-    .orb2 { width: 400px; height: 400px; background: #06b6d4; bottom: -100px; right: -100px; animation-delay: -3s; }
-    .orb3 { width: 300px; height: 300px; background: #8b5cf6; top: 40%; left: 50%; animation-delay: -5s; }
-    @keyframes orbFloat {
-      from { transform: translate(0, 0) scale(1); }
-      to { transform: translate(30px, -30px) scale(1.1); }
-    }
+    a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--text); }
 
+    /* Header */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -58,52 +39,79 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 40px;
-      background: rgba(6, 6, 8, 0.8);
-      backdrop-filter: blur(20px);
+      padding: 16px 32px;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 700;
+      color: var(--text);
     }
     .logo-mark {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #7c3aed, #06b6d4);
-      border-radius: 10px;
+      width: 34px; height: 34px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-weight: 800;
       font-size: 1rem;
+      color: var(--text);
     }
-    .nav-links { display: flex; gap: 32px; }
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { font-size: 0.9rem; }
+    .nav-cta-link {
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: opacity 0.2s, transform 0.2s;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-cta-link:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg); }
     .nav-cta {
-      background: linear-gradient(135deg, #7c3aed, #5b21b6);
-      color: #fff;
+      background: var(--text);
+      color: var(--bg);
       border: none;
-      padding: 10px 22px;
+      padding: 10px 20px;
       border-radius: 8px;
       font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
+      font-family: inherit;
       transition: opacity 0.2s, transform 0.2s;
-      font-family: 'Inter', sans-serif;
     }
     .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    main {
-      position: relative;
-      z-index: 1;
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px;
     }
+    .hamburger svg { width: 24px; height: 24px; }
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a, .mobile-menu .nav-cta { width: 100%; text-align: center; padding: 12px; }
+
+    main { position: relative; z-index: 1; }
 
     /* Hero */
     .hero {
@@ -113,146 +121,114 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 100px 24px 60px;
+      padding: 100px 24px 80px;
+      background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 40%, #1a1a1a 100%);
     }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(124, 58, 237, 0.15);
-      border: 1px solid rgba(124, 58, 237, 0.3);
-      color: #a78bfa;
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 24px;
-      animation: fadeUp 0.6s ease both;
-    }
-    .badge-dot {
-      width: 6px; height: 6px;
-      background: #10b981;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
     .hero h1 {
-      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
       font-weight: 800;
       line-height: 1.1;
       letter-spacing: -0.02em;
       margin-bottom: 20px;
-      animation: fadeUp 0.6s 0.1s ease both;
+      color: var(--text);
     }
-    .gradient-text {
-      background: linear-gradient(135deg, #a78bfa, #06b6d4, #7c3aed);
-      background-size: 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 4s ease infinite alternate;
-    }
-    @keyframes gradientShift {
-      from { background-position: 0%; }
-      to { background-position: 100%; }
-    }
-
+    .hero h1 .highlight { color: var(--text); }
     .hero p {
-      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
       color: var(--muted);
-      max-width: 560px;
-      line-height: 1.7;
-      margin-bottom: 40px;
-      animation: fadeUp 0.6s 0.2s ease both;
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 36px;
     }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 64px;
-      animation: fadeUp 0.6s 0.3s ease both;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #7c3aed, #5b21b6);
-      color: #fff;
+    .hero .btn-primary {
+      background: var(--text);
+      color: var(--bg);
       border: none;
       padding: 14px 32px;
-      border-radius: 12px;
+      border-radius: var(--radius);
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-      box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+      font-family: inherit;
+      transition: opacity 0.2s, transform 0.2s;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(124, 58, 237, 0.6); }
-    .btn-secondary {
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 14px 32px;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-    }
-    .btn-secondary:hover { border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
+    .hero .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
 
-    /* Feature pills */
-    .feature-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      animation: fadeUp 0.6s 0.4s ease both;
-    }
-    .pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .pill span:first-child { font-size: 0.95rem; }
-
-    /* Features section */
-    .features {
+    /* Section common */
+    .section {
       padding: 80px 24px;
       max-width: 1100px;
       margin: 0 auto;
     }
-    .section-label {
-      text-align: center;
-      color: #a78bfa;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
     .section-title {
-      text-align: center;
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
+      color: var(--text);
     }
     .section-desc {
-      text-align: center;
       color: var(--muted);
-      font-size: 1rem;
-      margin-bottom: 56px;
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+      line-height: 1.6;
     }
 
+    /* What we do - 3 cards */
+    .what-we-do .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .what-we-do .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.2s;
+    }
+    .what-we-do .card:hover { border-color: #444; }
+    .what-we-do .card-icon {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      color: var(--muted);
+    }
+    .what-we-do .card-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .what-we-do .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    .what-we-do .card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    /* Get Started - 4 steps */
+    .get-started .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .get-started .step {
+      text-align: center;
+    }
+    .get-started .step-num {
+      width: 48px; height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text);
+      margin: 0 auto 16px;
+    }
+    .get-started .step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .get-started .step p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* Features - 6 cards */
+    .features {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #252525 0%, #1a1a1a 50%, #151515 100%);
+    }
+    .features .section-title { text-align: center; }
+    .features .section-desc { text-align: center; }
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -261,25 +237,156 @@
     .feature-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px;
-      transition: all 0.3s;
-      cursor: default;
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s;
     }
-    .feature-card:hover {
-      border-color: rgba(124, 58, 237, 0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
+    .feature-card:hover { border-color: #444; }
     .feature-icon {
-      width: 48px; height: 48px;
-      border-radius: 12px;
+      width: 44px; height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      color: var(--muted);
     }
-    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
-    .feature-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+    .feature-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .feature-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .feature-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+
+    /* Testimonials - infinite horizontal scroll */
+    .testimonials .section-title { text-align: center; }
+    .testimonials .section-desc { text-align: center; }
+    .testimonial-marquee {
+      margin-top: 24px;
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    }
+    .testimonial-track {
+      display: flex;
+      gap: 20px;
+      width: max-content;
+      padding: 8px 0;
+      animation: testimonial-scroll 35s linear infinite;
+    }
+    .testimonial-track:hover { animation-play-state: paused; }
+    @keyframes testimonial-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .testimonial-card {
+      flex: 0 0 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .testimonial-card .avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .testimonial-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .testimonial-card .name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+
+    /* FAQ */
+    .faq-section { padding: 80px 24px; max-width: 700px; margin: 0 auto; }
+    .faq-section .section-title { text-align: center; }
+    .faq-section .section-desc { text-align: center; }
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .faq-item summary {
+      padding: 16px 20px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: '';
+      width: 16px; height: 16px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .faq-item[open] summary::after { transform: rotate(-135deg); }
+    .faq-item .faq-answer {
+      padding: 0 20px 16px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* CTA */
+    .cta-section {
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .cta-box {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .cta-section .section-desc { margin-bottom: 24px; }
+    .cta-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta-form input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .cta-form input::placeholder { color: var(--dim); }
+    .cta-form input:focus { border-color: #555; }
+    .cta-form button {
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+    .cta-form button:hover { opacity: 0.9; }
+    .toast-msg {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: none;
+    }
+    .toast-msg.show { display: block; }
 
     /* Auth section */
     .auth-section {
@@ -290,98 +397,69 @@
     .auth-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 48px 40px;
+      border-radius: var(--radius);
+      padding: 40px;
       width: 100%;
-      max-width: 440px;
-      animation: fadeUp 0.6s ease both;
+      max-width: 420px;
     }
     .auth-tabs {
       display: flex;
       background: var(--bg);
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 4px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
     .auth-tab {
       flex: 1;
-      padding: 9px;
+      padding: 10px;
       border: none;
       background: transparent;
       color: var(--muted);
-      font-family: 'Inter', sans-serif;
+      font-family: inherit;
       font-size: 0.875rem;
       font-weight: 500;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .auth-tab.active {
-      background: var(--surface);
-      color: var(--text);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .auth-card h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .auth-card .subtitle {
-      color: var(--muted);
-      font-size: 0.875rem;
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
-    .form-group { margin-bottom: 18px; }
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
+    .auth-tab.active { background: var(--surface); color: var(--text); }
+    .auth-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .auth-card .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; line-height: 1.5; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
     .form-group input {
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 12px 16px;
-      border-radius: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
       font-size: 0.9rem;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.2s;
+      font-family: inherit;
       outline: none;
     }
-    .form-group input:focus { border-color: #7c3aed; }
-    .form-group input::placeholder { color: var(--muted); }
+    .form-group input:focus { border-color: #555; }
+    .form-group input::placeholder { color: var(--dim); }
     .submit-btn {
       width: 100%;
-      background: linear-gradient(135deg, #7c3aed, #5b21b6);
-      color: #fff;
+      background: var(--text);
+      color: var(--bg);
       border: none;
-      padding: 13px;
-      border-radius: 10px;
-      font-size: 0.95rem;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
-      margin-top: 8px;
-      box-shadow: 0 0 20px rgba(124, 58, 237, 0.35);
+      font-family: inherit;
+      margin-top: 6px;
+      transition: opacity 0.2s;
     }
-    .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .auth-footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .auth-footer a {
-      color: #a78bfa;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
+    .submit-btn:hover { opacity: 0.9; }
+    .auth-footer { text-align: center; margin-top: 18px; font-size: 0.8rem; color: var(--muted); }
+    .auth-footer a { color: var(--text); cursor: pointer; }
+    .auth-footer a:hover { text-decoration: underline; }
+    .auth-error { font-size: 0.8rem; color: #b91c1c; margin-top: 6px; display: none; }
+    .auth-error.show { display: block; }
     .auth-divider {
       display: flex;
       align-items: center;
@@ -390,13 +468,7 @@
       color: var(--muted);
       font-size: 0.8rem;
     }
-    .auth-divider::before,
-    .auth-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .google-btn {
       display: flex;
       align-items: center;
@@ -406,140 +478,255 @@
       padding: 12px 16px;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 8px;
       color: var(--text);
       font-size: 0.9rem;
       font-weight: 500;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
+      font-family: inherit;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .google-btn:hover {
-      border-color: var(--accent);
-      background: var(--accent-dim);
-    }
-    .google-btn img { width: 20px; height: 20px; }
+    .google-btn:hover { border-color: #555; background: var(--surface2); }
     .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* Footer */
     footer {
-      text-align: center;
       padding: 40px 24px;
-      color: var(--muted);
-      font-size: 0.8rem;
       border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, #252525 0%, #1a1a1a 100%);
     }
-    footer strong { color: #a78bfa; }
+    footer .brand { font-weight: 700; color: var(--text); }
+    footer .links { display: flex; gap: 24px; }
+    footer .links a { font-size: 0.85rem; }
+    footer .copy { font-size: 0.8rem; color: var(--dim); }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Mobile nav */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       nav { padding: 14px 20px; }
       .nav-links { display: none; }
-      .auth-card { padding: 32px 24px; }
+      .hamburger { display: flex; }
+      .what-we-do .cards { grid-template-columns: 1fr; }
+      .get-started .steps { grid-template-columns: 1fr; }
+      .testimonial-card { flex: 0 0 280px; }
+    }
+
+    @media (max-width: 640px) {
+      .auth-card { padding: 28px 20px; max-width: 100%; }
+      .form-group input { min-width: 0; }
+      footer { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div class="orbs">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-  </div>
-
   <nav>
-    <div class="nav-logo">
+    <a href="#" class="nav-logo">
       <div class="logo-mark">Y</div>
       YourAI
-    </div>
+    </a>
     <div class="nav-links">
+      <a href="#what-we-do">What we do</a>
       <a href="#features">Features</a>
-      <a href="#auth">Get Started</a>
+      <a href="#auth" class="nav-cta-link">Get Started</a>
     </div>
-    <button class="nav-cta" onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">Launch App</button>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#what-we-do" onclick="closeMobileMenu()">What we do</a>
+      <a href="#features" onclick="closeMobileMenu()">Features</a>
+      <a href="#auth" onclick="closeMobileMenu()">Get Started</a>
+    </div>
   </nav>
 
   <main>
-    <!-- Hero -->
     <section class="hero">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        Powered by Gemini AI · Free to use
-      </div>
-      <h1>Your Personal<br><span class="gradient-text">AI Universe</span></h1>
-      <p>Chat, research, create images, draft emails, write video scripts — all with an AI that knows you personally.</p>
-      <div class="hero-actions">
-        <button class="btn-primary" onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">Get Started Free →</button>
-        <button class="btn-secondary" onclick="window.location.href='dashboard.html'">Open Dashboard</button>
-      </div>
-      <div class="feature-pills">
-        <div class="pill"><span>💬</span> Smart Chat</div>
-        <div class="pill"><span>🔍</span> Research Mode</div>
-        <div class="pill"><span>🎨</span> Image Generation</div>
-        <div class="pill"><span>📧</span> Email Drafting</div>
-        <div class="pill"><span>🎬</span> Video Scripts</div>
-        <div class="pill"><span>🎤</span> Voice Input</div>
-        <div class="pill"><span>👤</span> Personal Profile</div>
-        <div class="pill"><span>🌙</span> Dark Mode</div>
+      <h1>Your Personal <span class="highlight">AI</span></h1>
+      <p>Chat, research, create, and get more done with an AI that works the way you do.</p>
+      <button class="btn-primary" onclick="document.getElementById('auth').scrollIntoView({behavior:'smooth'})">Get Started</button>
+    </section>
+
+    <section class="section what-we-do" id="what-we-do">
+      <h2 class="section-title">What we do</h2>
+      <p class="section-desc">We provide tools to make your workflow simpler and faster.</p>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg></div>
+          <h3>Sleek UI/UX</h3>
+          <p>A clean, intuitive interface so you can focus on what matters without distraction.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+          <h3>Connected</h3>
+          <p>Your data stays in sync. Use the same AI across chat, research, and creation tools.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <h3>Stay in control</h3>
+          <p>You decide what to share. Your profile and history stay private and in your hands.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Features -->
-    <section class="features" id="features">
-      <p class="section-label">Everything you need</p>
-      <h2 class="section-title">Not just a chatbot — <span class="gradient-text">your AI</span></h2>
-      <p class="section-desc">Combines the best of ChatGPT, Perplexity, and Gemini into one personal AI universe.</p>
+    <section class="section get-started">
+      <h2 class="section-title">Get Started with YourAI</h2>
+      <p class="section-desc">Create an account and start in minutes.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Create your account</h3>
+          <p><a href="signup.html" style="color:var(--text)">Sign up</a> with email or sign in with Google to get started.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Set up your profile</h3>
+          <p>Add a short bio and links so YourAI can personalize responses.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Add your API key</h3>
+          <p>Paste your Gemini key in Settings once; we use it securely.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>Start chatting</h3>
+          <p>Ask questions, run research, create images and emails.</p>
+        </div>
+      </div>
+    </section>
 
+    <section class="features" id="features">
+      <h2 class="section-title">Everything you need</h2>
+      <p class="section-desc">One place for chat, research, and creation.</p>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(124,58,237,0.15);">💬</div>
-          <h3>AI Chat with Memory</h3>
-          <p>Powered by Google Gemini. Conversations saved locally. Switch between Gemini Flash, Pro, and 2.0 models. Streaming responses with markdown rendering.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>AI Chat</h3>
+          <p>Conversations with Gemini. Streaming replies, markdown, and saved history.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(6,182,212,0.15);">🔍</div>
-          <h3>Research Mode</h3>
-          <p>Ask deep research questions. Get structured answers with summaries, key points, and follow-up suggestions — like Perplexity AI.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+          <h3>Research</h3>
+          <p>Structured research with summaries and key points, Perplexity-style.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(16,185,129,0.15);">🎨</div>
-          <h3>Image Generation</h3>
-          <p>Create stunning images from text prompts. Multiple art styles available. Download instantly. No extra API keys needed.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
+          <h3>Image generation</h3>
+          <p>Create images from text. Multiple styles and aspect ratios.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(245,158,11,0.15);">📧</div>
-          <h3>Email & Content Creation</h3>
-          <p>Draft professional emails, social posts, cover letters, and more. Set tone, style, and context for perfect results every time.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h3>Email drafts</h3>
+          <p>Professional emails and content with tone and type options.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(239,68,68,0.15);">🎤</div>
-          <h3>Voice Conversations</h3>
-          <p>Speak your messages with Web Speech API. AI responses read aloud. Full hands-free voice call mode for natural conversations.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+          <h3>Voice input</h3>
+          <p>Speak your messages. Optional voice call mode and text-to-speech.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(167,139,250,0.15);">👤</div>
-          <h3>Your Personal Profile</h3>
-          <p>Feed YourAI your bio, social links, and interests. It learns who you are and tailors every response to your unique personality and goals.</p>
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <h3>Personal profile</h3>
+          <p>Add your bio and links. YourAI tailors answers to you.</p>
         </div>
       </div>
     </section>
 
-    <!-- Auth Section -->
+    <section class="section testimonials">
+      <h2 class="section-title">What our users say</h2>
+      <p class="section-desc">Don't just take our word for it.</p>
+      <div class="testimonial-marquee">
+        <div class="testimonial-track" id="testimonialTrack">
+          <div class="testimonial-card">
+            <div class="avatar">JD</div>
+            <p>YourAI is a game changer. I use it for research and email drafts every day. Clean and fast.</p>
+            <span class="name">John D.</span>
+          </div>
+          <div class="testimonial-card">
+            <div class="avatar">AS</div>
+            <p>Finally an AI that remembers my profile. Responses feel tailored to my work and interests.</p>
+            <span class="name">Alex S.</span>
+          </div>
+          <div class="testimonial-card">
+            <div class="avatar">MK</div>
+            <p>Voice input and the dashboard layout are exactly what I needed. No clutter, just utility.</p>
+            <span class="name">Morgan K.</span>
+          </div>
+          <div class="testimonial-card">
+            <div class="avatar">JD</div>
+            <p>YourAI is a game changer. I use it for research and email drafts every day. Clean and fast.</p>
+            <span class="name">John D.</span>
+          </div>
+          <div class="testimonial-card">
+            <div class="avatar">AS</div>
+            <p>Finally an AI that remembers my profile. Responses feel tailored to my work and interests.</p>
+            <span class="name">Alex S.</span>
+          </div>
+          <div class="testimonial-card">
+            <div class="avatar">MK</div>
+            <p>Voice input and the dashboard layout are exactly what I needed. No clutter, just utility.</p>
+            <span class="name">Morgan K.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-desc">Common questions about YourAI.</p>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>What is YourAI?</summary>
+          <div class="faq-answer">YourAI is a personal AI assistant in your browser. It combines chat, research, image generation, email drafting, and video scripts in one dashboard, powered by Google Gemini.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Is YourAI free?</summary>
+          <div class="faq-answer">The app is free to use. You bring your own Gemini API key from Google AI Studio, which has a free tier. Image generation uses a free service (Pollinations).</div>
+        </details>
+        <details class="faq-item">
+          <summary>Is my data secure?</summary>
+          <div class="faq-answer">Conversations and settings are stored only in your browser (localStorage). We don't send your data to any server except Google's API when you send a message.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to create an account?</summary>
+          <div class="faq-answer">Yes. Create an account on the sign-up page (name, email, password) or sign in with Google. Your data is stored locally in your browser.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Can I use it on mobile?</summary>
+          <div class="faq-answer">Yes. The dashboard is responsive. Use a local server (e.g. npx serve) and open the app on your phone for the best experience.</div>
+        </details>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="cta-box">
+        <h2 class="section-title">Ready to get started?</h2>
+        <p class="section-desc">Sign up and experience your personal AI.</p>
+        <form class="cta-form" id="ctaForm" onsubmit="handleCtaSubmit(event)">
+          <input type="email" id="ctaEmail" placeholder="Email" required>
+          <button type="submit">Sign up</button>
+        </form>
+        <p class="toast-msg" id="ctaToast">Thanks. We'll be in touch.</p>
+      </div>
+    </section>
+
     <section class="auth-section" id="auth">
       <div class="auth-card">
         <div class="auth-tabs">
-          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
-          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create Account</button>
+          <button type="button" class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Sign In</button>
+          <button type="button" class="auth-tab" id="signupTab" onclick="switchAuthTab('signup')">Sign Up</button>
         </div>
-
-        <!-- Login -->
         <div id="loginForm">
           <h2>Welcome back</h2>
-          <p class="subtitle">Sign in with Google or enter your name to continue.</p>
+          <p class="subtitle">Sign in to open your dashboard.</p>
           <button type="button" class="google-btn" id="googleSignInBtn" onclick="handleGoogleSignIn()">
             <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Sign in with Google
@@ -547,150 +734,202 @@
           <div class="auth-divider">or</div>
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
-              <label>Your Name</label>
-              <input type="text" id="loginName" placeholder="e.g. Alex Johnson" required autocomplete="off">
+              <label>Email</label>
+              <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
             </div>
-            <button type="submit" class="submit-btn">Open My Dashboard →</button>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+            </div>
+            <p class="auth-error" id="loginError"></p>
+            <button type="submit" class="submit-btn" id="loginBtn">Sign in</button>
           </form>
-          <div class="auth-footer">Don't have an account? <a onclick="switchTab('signup')">Create one</a></div>
+          <div class="auth-footer">Don't have an account? <a href="#" onclick="switchAuthTab('signup'); return false;">Sign up</a></div>
         </div>
-
-        <!-- Signup -->
         <div id="signupForm" style="display:none">
-          <h2>Get started for free</h2>
-          <p class="subtitle">Sign in with Google or create your YourAI profile below.</p>
-          <button type="button" class="google-btn" onclick="handleGoogleSignIn()">
+          <h2>Create account</h2>
+          <p class="subtitle">Sign up to use your personal AI dashboard.</p>
+          <button type="button" class="google-btn" id="googleSignUpBtn" onclick="handleGoogleSignIn()">
             <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Sign in with Google
+            Sign up with Google
           </button>
           <div class="auth-divider">or</div>
           <form onsubmit="handleSignup(event)">
             <div class="form-group">
-              <label>Your Name</label>
-              <input type="text" id="signupName" placeholder="e.g. Alex Johnson" required>
+              <label>Name</label>
+              <input type="text" id="signupName" placeholder="Your name" required autocomplete="name">
             </div>
             <div class="form-group">
-              <label>Short Bio (optional)</label>
-              <input type="text" id="signupBio" placeholder="e.g. Developer, curious mind, coffee lover">
+              <label>Email</label>
+              <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email">
             </div>
-            <button type="submit" class="submit-btn">Create My AI Profile →</button>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+              <label>Confirm password</label>
+              <input type="password" id="signupConfirm" placeholder="Confirm password" required minlength="6" autocomplete="new-password">
+            </div>
+            <p class="auth-error" id="signupError"></p>
+            <button type="submit" class="submit-btn" id="signupBtn">Create account</button>
           </form>
-          <div class="auth-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+          <div class="auth-footer">Already have an account? <a href="#" onclick="switchAuthTab('login'); return false;">Sign in</a></div>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    Built with ❤️ using <strong>YourAI</strong> · Powered by Google Gemini · Open Source
+    <span class="brand">YourAI</span>
+    <div class="links">
+      <a href="#" onclick="showFooterToast('Privacy'); return false;">Privacy Policy</a>
+      <a href="#" onclick="showFooterToast('Terms'); return false;">Terms</a>
+      <a href="#" onclick="showFooterToast('Contact'); return false;">Contact</a>
+    </div>
+    <span class="copy">© 2026 YourAI. All rights reserved.</span>
   </footer>
 
-  <!-- Optional: Firebase config (copy config.example.js to config.js and add FIREBASE_CONFIG) -->
   <script src="config.js"></script>
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
   <script>
-    // Check existing session
     (function() {
-      const user = localStorage.getItem('yourAI_user');
+      var user = localStorage.getItem('yourAI_user');
       if (user) {
         try {
-          const parsed = JSON.parse(user);
-          if (parsed && parsed.name) {
-            window.location.href = 'dashboard.html';
-          }
+          var parsed = JSON.parse(user);
+          if (parsed && (parsed.onboardingComplete || parsed.name)) window.location.href = 'dashboard.html';
         } catch(e) {}
       }
     })();
 
-    let firebaseAuth = null;
-
-    function getFirebaseAuth() {
-      if (firebaseAuth) return firebaseAuth;
-      const config = typeof window.FIREBASE_CONFIG !== 'undefined' && window.FIREBASE_CONFIG
-        && window.FIREBASE_CONFIG.apiKey && window.FIREBASE_CONFIG.apiKey !== 'YOUR_FIREBASE_API_KEY'
-        ? window.FIREBASE_CONFIG : null;
-      if (!config) return null;
-      if (typeof firebase === 'undefined') return null;
-      try {
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        firebaseAuth = firebase.auth();
-        return firebaseAuth;
-      } catch (e) {
-        console.warn('Firebase init error:', e);
-        return null;
-      }
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
     }
 
-    function handleGoogleSignIn() {
-      const auth = getFirebaseAuth();
-      if (!auth) {
-        alert('Sign in with Google is not configured yet.\n\n1. Copy config.example.js to config.js\n2. Add your Firebase config (Firebase Console → Project Settings → Your apps)\n3. Enable Google sign-in in Authentication → Sign-in method');
-        return;
-      }
-      const btn = document.getElementById('googleSignInBtn');
-      if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(function(result) {
-          const u = result.user;
-          const name = u.displayName || u.email?.split('@')[0] || 'User';
-          const user = {
-            name,
-            email: u.email || '',
-            photoURL: u.photoURL || '',
-            uid: u.uid,
-            createdAt: Date.now(),
-            lastLogin: Date.now(),
-            profileComplete: false,
-            conversations: [],
-            settings: { theme: 'dark', model: 'gemini-1.5-flash' }
-          };
-          localStorage.setItem('yourAI_user', JSON.stringify(user));
-          window.location.href = 'dashboard.html';
-        })
-        .catch(function(err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google';
-          }
-          alert('Sign in failed: ' + (err.message || 'Unknown error'));
-        });
-    }
-
-    function switchTab(tab) {
+    function switchAuthTab(tab) {
       document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
       document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
       document.getElementById('loginTab').classList.toggle('active', tab === 'login');
       document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
     }
 
+    function handleCtaSubmit(e) {
+      e.preventDefault();
+      var email = document.getElementById('ctaEmail').value.trim();
+      if (!email) return;
+      try { localStorage.setItem('yourAI_cta_email', email); } catch(err) {}
+      document.getElementById('ctaToast').classList.add('show');
+      document.getElementById('ctaForm').reset();
+    }
+
+    function showFooterToast(page) {
+      alert(page + ' – coming soon.');
+    }
+
+    var firebaseAuth = null;
+    function getFirebaseAuth() {
+      if (firebaseAuth) return firebaseAuth;
+      var config = typeof window.FIREBASE_CONFIG !== 'undefined' && window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && window.FIREBASE_CONFIG.apiKey !== 'YOUR_FIREBASE_API_KEY' ? window.FIREBASE_CONFIG : null;
+      if (!config || typeof firebase === 'undefined') return null;
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(config);
+        firebaseAuth = firebase.auth();
+        return firebaseAuth;
+      } catch (e) { console.warn('Firebase init error:', e); return null; }
+    }
+
+    function handleGoogleSignIn() {
+      var auth = getFirebaseAuth();
+      if (!auth) {
+        alert('Sign in with Google is not configured yet.\n\n1. Copy config.example.js to config.js\n2. Add your Firebase config (Firebase Console → Project Settings → Your apps)\n3. Enable Google sign-in in Authentication → Sign-in method');
+        return;
+      }
+      var btn = document.getElementById('googleSignInBtn') || document.getElementById('googleSignUpBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+      var provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(function(result) {
+          var u = result.user;
+          var name = u.displayName || (u.email && u.email.split('@')[0]) || 'User';
+          var user = { name: name, email: u.email || '', photoURL: u.photoURL || '', uid: u.uid, onboardingComplete: true, createdAt: Date.now(), lastLogin: Date.now(), profileComplete: false, conversations: [], settings: { theme: 'dark', model: 'gemini-1.5-flash' } };
+          localStorage.setItem('yourAI_user', JSON.stringify(user));
+          window.location.href = 'dashboard.html';
+        })
+        .catch(function(err) {
+          if (btn) { btn.disabled = false; btn.innerHTML = btn.id === 'googleSignUpBtn' ? '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign up with Google' : '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google'; }
+          alert('Sign in failed: ' + (err.message || 'Unknown error'));
+        });
+    }
+
     function handleLogin(e) {
       e.preventDefault();
-      const name = document.getElementById('loginName').value.trim();
-      if (!name) return;
-      const existing = JSON.parse(localStorage.getItem('yourAI_user') || '{}');
-      const user = { ...existing, name, lastLogin: Date.now() };
+      var errEl = document.getElementById('loginError');
+      var btn = document.getElementById('loginBtn');
+      errEl.classList.remove('show');
+      errEl.textContent = '';
+      var email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
+      var password = (document.getElementById('loginPassword').value || '');
+      if (!email || !password) {
+        errEl.textContent = 'Enter email and password.';
+        errEl.classList.add('show');
+        return;
+      }
+      var users = [];
+      try {
+        var stored = localStorage.getItem('yourAI_users');
+        if (stored) users = JSON.parse(stored);
+      } catch (err) {}
+      var account = users.find(function(u) { return u.email === email; });
+      if (!account || account.password !== password) {
+        errEl.textContent = 'Invalid email or password.';
+        errEl.classList.add('show');
+        return;
+      }
+      btn.disabled = true;
+      var user = {
+        name: account.name,
+        email: account.email,
+        onboardingComplete: true,
+        lastLogin: Date.now(),
+        profileComplete: false,
+        conversations: [],
+        settings: { theme: 'dark', model: 'gemini-1.5-flash' }
+      };
       localStorage.setItem('yourAI_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';
     }
 
     function handleSignup(e) {
       e.preventDefault();
-      const name = document.getElementById('signupName').value.trim();
-      const bio = document.getElementById('signupBio').value.trim();
-      if (!name) return;
-      const user = {
-        name,
-        bio,
-        createdAt: Date.now(),
-        lastLogin: Date.now(),
-        profileComplete: false,
-        conversations: [],
-        settings: { theme: 'dark', model: 'gemini-2.0-flash' }
-      };
+      var errEl = document.getElementById('signupError');
+      var btn = document.getElementById('signupBtn');
+      errEl.classList.remove('show');
+      errEl.textContent = '';
+      var name = (document.getElementById('signupName').value || '').trim();
+      var email = (document.getElementById('signupEmail').value || '').trim().toLowerCase();
+      var password = (document.getElementById('signupPassword').value || '');
+      var confirmPassword = (document.getElementById('signupConfirm').value || '');
+      if (!name) { errEl.textContent = 'Enter your name.'; errEl.classList.add('show'); return; }
+      if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+      if (password !== confirmPassword) { errEl.textContent = 'Passwords do not match.'; errEl.classList.add('show'); return; }
+      btn.disabled = true;
+      var users = [];
+      try { var stored = localStorage.getItem('yourAI_users'); if (stored) users = JSON.parse(stored); } catch (err) {}
+      if (users.some(function(u) { return u.email === email; })) {
+        errEl.textContent = 'An account with this email already exists. Sign in instead.';
+        errEl.classList.add('show');
+        btn.disabled = false;
+        return;
+      }
+      users.push({ name: name, email: email, password: password });
+      localStorage.setItem('yourAI_users', JSON.stringify(users));
+      var user = { name: name, email: email, onboardingComplete: true, lastLogin: Date.now(), profileComplete: false, conversations: [], settings: { theme: 'dark', model: 'gemini-1.5-flash' } };
       localStorage.setItem('yourAI_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';
     }

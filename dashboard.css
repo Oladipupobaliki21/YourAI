@@ -326,7 +326,9 @@ a:hover { color: var(--text); text-decoration: underline; }
 
 .hamburger { display: none; }
 @media (min-width: 769px) {
+  .sidebar-close { display: flex; }
   .hamburger { display: none; }
+  body.sidebar-collapsed .sidebar-close { display: none; }
   body.sidebar-collapsed .hamburger { display: flex; }
   body.sidebar-collapsed .sidebar {
     width: 0;
@@ -413,9 +415,8 @@ a:hover { color: var(--text); text-decoration: underline; }
 .panel::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
 /* ==================== CHAT ==================== */
-/* Do not set display on #chatPanel — .panel / .panel.active control visibility so chat hides when other panels are active */
+/* Do NOT set display on #chatPanel — .panel / .panel.active control visibility. Otherwise chat stays visible behind other panels. */
 #chatPanel {
-  position: relative;
   min-height: 0;
   overflow: hidden;
 }

@@ -1423,9 +1423,19 @@ document.addEventListener('click', (e) => {
 function scrollToBottom() {
   const el = document.getElementById('messages');
   if (!el) return;
-  el.scrollTop = el.scrollHeight;
-  requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
-  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 80);
+  function doScroll() {
+    el.scrollTop = el.scrollHeight;
+  }
+  doScroll();
+  requestAnimationFrame(() => {
+    doScroll();
+    requestAnimationFrame(doScroll);
+  });
+  const last = el.lastElementChild;
+  if (last) last.scrollIntoView({ block: 'end', behavior: 'auto' });
+  setTimeout(doScroll, 0);
+  setTimeout(doScroll, 100);
+  setTimeout(doScroll, 250);
 }
 
 function showToast(message, type = '') {
