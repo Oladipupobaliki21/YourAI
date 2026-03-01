@@ -382,6 +382,45 @@
       text-decoration: none;
     }
 
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 16px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .google-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .google-btn img { width: 20px; height: 20px; }
+    .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
     /* Footer */
     footer {
       text-align: center;
@@ -500,7 +539,12 @@
         <!-- Login -->
         <div id="loginForm">
           <h2>Welcome back</h2>
-          <p class="subtitle">Enter your name to access your personal AI workspace.</p>
+          <p class="subtitle">Sign in with Google or enter your name to continue.</p>
+          <button type="button" class="google-btn" id="googleSignInBtn" onclick="handleGoogleSignIn()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Sign in with Google
+          </button>
+          <div class="auth-divider">or</div>
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
               <label>Your Name</label>
@@ -514,7 +558,12 @@
         <!-- Signup -->
         <div id="signupForm" style="display:none">
           <h2>Get started for free</h2>
-          <p class="subtitle">Create your YourAI profile. Your AI will learn about you and improve over time.</p>
+          <p class="subtitle">Sign in with Google or create your YourAI profile below.</p>
+          <button type="button" class="google-btn" onclick="handleGoogleSignIn()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Sign in with Google
+          </button>
+          <div class="auth-divider">or</div>
           <form onsubmit="handleSignup(event)">
             <div class="form-group">
               <label>Your Name</label>
@@ -536,6 +585,12 @@
     Built with ❤️ using <strong>YourAI</strong> · Powered by Google Gemini · Open Source
   </footer>
 
+  <!-- Optional: Firebase config (copy config.example.js to config.js and add FIREBASE_CONFIG) -->
+  <script src="config.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
   <script>
     // Check existing session
     (function() {
@@ -549,6 +604,61 @@
         } catch(e) {}
       }
     })();
+
+    let firebaseAuth = null;
+
+    function getFirebaseAuth() {
+      if (firebaseAuth) return firebaseAuth;
+      const config = typeof window.FIREBASE_CONFIG !== 'undefined' && window.FIREBASE_CONFIG
+        && window.FIREBASE_CONFIG.apiKey && window.FIREBASE_CONFIG.apiKey !== 'YOUR_FIREBASE_API_KEY'
+        ? window.FIREBASE_CONFIG : null;
+      if (!config) return null;
+      if (typeof firebase === 'undefined') return null;
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(config);
+        firebaseAuth = firebase.auth();
+        return firebaseAuth;
+      } catch (e) {
+        console.warn('Firebase init error:', e);
+        return null;
+      }
+    }
+
+    function handleGoogleSignIn() {
+      const auth = getFirebaseAuth();
+      if (!auth) {
+        alert('Sign in with Google is not configured yet.\n\n1. Copy config.example.js to config.js\n2. Add your Firebase config (Firebase Console → Project Settings → Your apps)\n3. Enable Google sign-in in Authentication → Sign-in method');
+        return;
+      }
+      const btn = document.getElementById('googleSignInBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(function(result) {
+          const u = result.user;
+          const name = u.displayName || u.email?.split('@')[0] || 'User';
+          const user = {
+            name,
+            email: u.email || '',
+            photoURL: u.photoURL || '',
+            uid: u.uid,
+            createdAt: Date.now(),
+            lastLogin: Date.now(),
+            profileComplete: false,
+            conversations: [],
+            settings: { theme: 'dark', model: 'gemini-1.5-flash' }
+          };
+          localStorage.setItem('yourAI_user', JSON.stringify(user));
+          window.location.href = 'dashboard.html';
+        })
+        .catch(function(err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google';
+          }
+          alert('Sign in failed: ' + (err.message || 'Unknown error'));
+        });
+    }
 
     function switchTab(tab) {
       document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
