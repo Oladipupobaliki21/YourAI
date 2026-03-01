@@ -15,13 +15,13 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <!-- ==================== SIDEBAR ==================== -->
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-header">
     <div class="logo">
       <div class="logo-mark">Y</div>
       <span class="logo-text">YourAI</span>
     </div>
-    <button class="icon-btn sidebar-close" onclick="closeSidebar()" title="Close sidebar">
+    <button type="button" class="icon-btn sidebar-close" onclick="sidebarCloseClick()" title="Close sidebar">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
   </div>
@@ -34,35 +34,35 @@
   <nav class="sidebar-nav">
     <button class="nav-item active" data-mode="chat" onclick="switchMode('chat')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Chat
+      <span>Chat</span>
     </button>
     <button class="nav-item" data-mode="research" onclick="switchMode('research')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Research
+      <span>Research</span>
     </button>
 
     <div class="nav-group-label">Create</div>
     <button class="nav-item" data-mode="image" onclick="switchMode('image')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-      Image Generator
+      <span>Image Generator</span>
     </button>
     <button class="nav-item" data-mode="email" onclick="switchMode('email')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Email Drafts
+      <span>Email Drafts</span>
     </button>
     <button class="nav-item" data-mode="video" onclick="switchMode('video')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      Video Scripts
+      <span>Video Scripts</span>
     </button>
 
     <div class="nav-group-label">Personal</div>
     <button class="nav-item" data-mode="profile" onclick="switchMode('profile')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      My Profile
+      <span>My Profile</span>
     </button>
     <button class="nav-item" data-mode="history" onclick="switchMode('history')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
-      History
+      <span>History</span>
     </button>
   </nav>
 
@@ -91,9 +91,9 @@
 <main class="main" id="main">
 
   <!-- Top Bar -->
-  <header class="topbar">
+  <header class="topbar" role="banner">
     <div class="topbar-left">
-      <button class="icon-btn hamburger" onclick="openSidebar()" title="Menu">
+      <button type="button" class="icon-btn hamburger" id="hamburgerBtn" onclick="toggleSidebar(event)" title="Toggle sidebar" aria-label="Toggle sidebar">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
       </button>
       <h1 class="page-title" id="pageTitle">Chat</h1>
@@ -102,9 +102,10 @@
       <div class="model-select-wrap">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
         <select id="modelSelect" class="model-select" onchange="changeModel(this.value)">
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
           <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash</option>
           <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
         </select>
       </div>
     </div>
@@ -134,32 +135,32 @@
         <div class="welcome-logo">
           <div class="welcome-logo-icon">Y</div>
         </div>
-        <h2 id="welcomeMsg">Good day! How can I help?</h2>
-        <p id="welcomeSub">I'm YourAI — your personal AI. Chat, research, create, or ask me anything.</p>
+        <h2 id="welcomeMsg">How can I help?</h2>
+        <p id="welcomeSub">Chat, research, or create. Ask anything.</p>
         <div class="quick-actions" id="quickActions">
-          <button class="quick-btn" onclick="quickPrompt('Research the latest trends in AI for 2025')">
+          <button class="quick-btn" onclick="quickPrompt('Research the latest trends in AI for 2026')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Research AI trends
           </button>
           <button class="quick-btn" onclick="quickPrompt('Write a professional email introducing myself to a potential client')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Draft an email
+            Draft email
           </button>
           <button class="quick-btn" onclick="quickPrompt('Help me analyze my personality and suggest ways to improve')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Analyze my personality
+            Personality tips
           </button>
           <button class="quick-btn" onclick="quickPrompt('Explain quantum computing in simple terms with examples')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Explain something complex
+            Explain complex topic
           </button>
           <button class="quick-btn" onclick="switchMode('image')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-            Generate an image
+            Generate image
           </button>
           <button class="quick-btn" onclick="switchMode('video')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            Write a video script
+            Video script
           </button>
         </div>
       </div>
@@ -171,12 +172,12 @@
     <div class="panel" id="researchPanel">
       <div class="tool-panel">
         <div class="tool-header">
-          <div class="tool-icon" style="background: rgba(6,182,212,0.15); color:#06b6d4;">
+          <div class="tool-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </div>
           <div>
-            <h2>Research Mode</h2>
-            <p>Deep research powered by Gemini AI</p>
+            <h2>Research</h2>
+            <p>Structured research with Gemini</p>
           </div>
         </div>
         <div class="research-input-box">
@@ -201,12 +202,12 @@
     <div class="panel" id="imagePanel">
       <div class="tool-panel">
         <div class="tool-header">
-          <div class="tool-icon" style="background: rgba(16,185,129,0.15); color:#10b981;">
+          <div class="tool-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
           </div>
           <div>
             <h2>Image Generator</h2>
-            <p>Create stunning visuals from text descriptions</p>
+            <p>Create images from text</p>
           </div>
         </div>
         <div class="form-grid">
@@ -248,12 +249,12 @@
     <div class="panel" id="emailPanel">
       <div class="tool-panel">
         <div class="tool-header">
-          <div class="tool-icon" style="background: rgba(245,158,11,0.15); color:#f59e0b;">
+          <div class="tool-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
             <h2>Email Drafts</h2>
-            <p>AI-powered email writing for any occasion</p>
+            <p>AI email writing</p>
           </div>
         </div>
         <div class="form-grid">
@@ -307,18 +308,18 @@
     <div class="panel" id="videoPanel">
       <div class="tool-panel">
         <div class="tool-header">
-          <div class="tool-icon" style="background: rgba(239,68,68,0.15); color:#ef4444;">
+          <div class="tool-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
           </div>
           <div>
             <h2>Video Scripts</h2>
-            <p>Write engaging video scripts and content</p>
+            <p>Scripts for video content</p>
           </div>
         </div>
         <div class="form-grid">
           <div class="form-field full">
             <label>Video Topic</label>
-            <textarea id="videoTopic" placeholder="What is your video about? e.g. '10 tips for productivity in 2025'" rows="2"></textarea>
+            <textarea id="videoTopic" placeholder="What is your video about? e.g. '10 tips for productivity in 2026'" rows="2"></textarea>
           </div>
           <div class="form-field">
             <label>Video Type</label>
@@ -429,7 +430,7 @@
             Analyze My Profile with AI
           </button>
         </div>
-        <div id="profileAnalysis" class="result-box hidden" style="margin-top:20px;"></div>
+        <div id="profileAnalysis" class="result-box hidden profile-analysis-box"></div>
       </div>
     </div>
 
@@ -437,7 +438,7 @@
     <div class="panel" id="historyPanel">
       <div class="tool-panel">
         <div class="tool-header">
-          <div class="tool-icon" style="background: rgba(167,139,250,0.15); color:#a78bfa;">
+          <div class="tool-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
           </div>
           <div>
@@ -518,9 +519,10 @@
       <div class="setting-group">
         <label>Default Model</label>
         <select id="settingsModel">
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest)</option>
           <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash (Balanced)</option>
           <option value="gemini-1.5-pro">Gemini 1.5 Pro (Most Capable)</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
         </select>
       </div>
       <div class="setting-group">

@@ -41,8 +41,8 @@ function loadState() {
     state.userProfile = saved.userProfile || {};
 
     // Use Gemini API key from config.js if present (and not the placeholder)
-    if (typeof window.GEMINI_API_KEY === 'string' && window.GEMINI_API_KEY && window.GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY') {
-      state.settings.apiKey = window.GEMINI_API_KEY;
+    if (typeof window.GEMINI_API_KEY === 'string' && window.GEMINI_API_KEY.trim() && window.GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY') {
+      state.settings.apiKey = window.GEMINI_API_KEY.trim();
     }
 
     // Merge user info into profile
@@ -84,14 +84,16 @@ async function callGemini(messages, systemPrompt = '') {
   const model = state.settings.model || 'gemini-1.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-  // Limit history to last 30 messages to keep tokens reasonable
-  const limited = messages.slice(-30);
+  // Limit history to last 30 messages; filter empty; ensure valid role alternation
+  const limited = messages.slice(-30).filter(m => m.content && String(m.content).trim());
+  if (limited.length === 0) throw new Error('No messages to send.');
+  const contents = limited.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: String(m.content).trim() }]
+  }));
 
   const body = {
-    contents: limited.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
-    })),
+    contents,
     generationConfig: {
       temperature: 0.9,
       maxOutputTokens: 4096,
@@ -103,20 +105,32 @@ async function callGemini(messages, systemPrompt = '') {
     body.systemInstruction = { parts: [{ text: systemPrompt }] };
   }
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (networkErr) {
+    const msg = networkErr.message || 'Network error';
+    throw new Error('Cannot reach Gemini API. Check your connection. ' + msg);
+  }
 
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `API error ${res.status}`;
+    let msg = data?.error?.message || data?.error?.status || ('API error ' + res.status);
+    if (res.status === 400 && (String(msg).toLowerCase().includes('api_key') || String(msg).toLowerCase().includes('key')))
+      msg = 'Invalid or missing API key. Add your Gemini key in Settings.';
+    if (res.status === 404 || (String(msg).toLowerCase().includes('model')))
+      msg = 'Model not available. Try "Gemini 1.5 Flash" in the model selector.';
     throw new Error(msg);
   }
 
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (text != null && text !== '') return text;
+  if (data.candidates?.[0]?.finishReason === 'SAFETY') return 'Response was blocked by safety filters. Try rephrasing.';
+  return 'No response generated. Try again or choose another model.';
 }
 
 // Streaming version for chat
@@ -127,25 +141,36 @@ async function callGeminiStream(messages, systemPrompt = '', onChunk) {
   const model = state.settings.model || 'gemini-1.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
-  const limited = messages.slice(-30);
+  const limited = messages.slice(-30).filter(m => m.content && String(m.content).trim());
+  if (limited.length === 0) throw new Error('No messages to send.');
   const body = {
     contents: limited.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
+      parts: [{ text: String(m.content).trim() }]
     })),
     generationConfig: { temperature: 0.9, maxOutputTokens: 4096, topP: 0.95 }
   };
   if (systemPrompt) body.systemInstruction = { parts: [{ text: systemPrompt }] };
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (networkErr) {
+    throw new Error('Cannot reach Gemini API. Check your connection. ' + (networkErr.message || ''));
+  }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `API error ${res.status}`);
+    const errData = await res.json().catch(() => ({}));
+    let msg = errData?.error?.message || errData?.error?.status || ('API error ' + res.status);
+    if (res.status === 400 && (String(msg).toLowerCase().includes('api_key') || String(msg).toLowerCase().includes('key')))
+      msg = 'Invalid or missing API key. Add your Gemini key in Settings.';
+    if (res.status === 404 || (String(msg).toLowerCase().includes('model')))
+      msg = 'Model not available. Try "Gemini 1.5 Flash" in the model selector.';
+    throw new Error(msg);
   }
 
   const reader = res.body.getReader();
@@ -491,35 +516,27 @@ async function sendMessage() {
   addMessage('user', content);
   renderMessages();
 
-  // Get current conversation
   const conv = getCurrentConversation();
-  const messages = conv.messages.slice(0, -1); // all except the one we're about to generate
-
   state.isLoading = true;
   setLoadingState(true);
 
-  // Remove typing, add streaming bubble
-  const typingEl = addTypingIndicator();
+  addTypingIndicator();
 
   try {
     const systemPrompt = getSystemPrompt();
-    const allMessages = conv.messages.filter(m => m.role !== 'assistant' || true);
-
-    // Try streaming first
     let fullResponse = '';
     removeTypingIndicator();
     createStreamingMessage();
 
     try {
       fullResponse = await callGeminiStream(
-        conv.messages.slice(0, -1), // messages before the AI response
+        conv.messages,
         systemPrompt,
         (chunk) => updateStreamingMessage(chunk)
       );
     } catch (streamErr) {
-      // Fallback to non-streaming
       updateStreamingMessage('*Thinking...*');
-      fullResponse = await callGemini(conv.messages.slice(0, -1), systemPrompt);
+      fullResponse = await callGemini(conv.messages, systemPrompt);
     }
 
     finalizeStreamingMessage(fullResponse);
@@ -535,13 +552,14 @@ async function sendMessage() {
   } catch (err) {
     removeTypingIndicator();
     finalizeStreamingMessage('');
-    let errMsg = err.message || 'Something went wrong';
-    if (errMsg === 'NO_API_KEY') errMsg = 'Please add your Gemini API key in Settings ⚙️';
-    else if (errMsg.includes('API_KEY_INVALID') || errMsg.includes('400')) errMsg = 'Invalid API key. Check your Gemini API key in Settings.';
-    else if (errMsg.includes('429')) errMsg = 'Rate limit reached. Please wait a moment before sending.';
+    let errMsg = (err && err.message) ? String(err.message) : 'Something went wrong';
+    if (errMsg === 'NO_API_KEY') errMsg = 'Please add your Gemini API key in Settings.';
+    else if (/API_KEY|invalid.*key|400/i.test(errMsg)) errMsg = 'Invalid or missing API key. Add your Gemini key in Settings.';
+    else if (errMsg.includes('429')) errMsg = 'Rate limit reached. Please wait a moment.';
     addMessage('assistant', `⚠️ ${errMsg}`);
     renderMessages();
     showToast(errMsg, 'error');
+    console.warn('Chat error:', err);
   } finally {
     state.isLoading = false;
     setLoadingState(false);
@@ -722,7 +740,7 @@ function startCallMic() {
     try {
       addMessage('user', transcript);
       const conv = getCurrentConversation() || createConversation(transcript);
-      const response = await callGemini(conv.messages.slice(0, -1), getSystemPrompt());
+      const response = await callGemini(conv.messages, getSystemPrompt());
       addMessage('assistant', response);
       renderMessages();
       renderRecentChats();
@@ -1183,9 +1201,35 @@ function updateNavActive(mode) {
 }
 
 // ==================== SIDEBAR ====================
+function isMobileSidebar() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function toggleSidebar(ev) {
+  if (ev) ev.preventDefault();
+  if (isMobileSidebar()) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open')) closeSidebar();
+    else openSidebar();
+  } else {
+    document.body.classList.toggle('sidebar-collapsed');
+  }
+}
+
 function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('overlay').classList.add('visible');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  sidebar.classList.add('open');
+  if (isMobileSidebar()) overlay.classList.add('visible');
+  else document.body.classList.remove('sidebar-collapsed');
+}
+
+function sidebarCloseClick() {
+  if (isMobileSidebar()) {
+    closeSidebar();
+  } else {
+    document.body.classList.add('sidebar-collapsed');
+  }
 }
 
 function closeSidebar() {
@@ -1293,7 +1337,7 @@ function renderHistoryPanel() {
         <span>${formatDate(conv.updatedAt)}</span>
       </div>
       <div class="history-card-meta" style="margin-top:4px;">
-        <span style="color:var(--accent-light);font-size:0.72rem;">${conv.model || 'gemini-1.5-flash'}</span>
+        <span style="color:var(--text-muted);font-size:0.72rem;">${conv.model || 'gemini-1.5-flash'}</span>
       </div>
       <div class="history-card-actions">
         <button class="history-card-del" onclick="deleteConversation('${conv.id}', event)">Delete</button>
@@ -1326,7 +1370,15 @@ function updateUserDisplay() {
 function handleInputKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
-    sendMessage();
+    if (state.currentMode === 'research') {
+      const q = document.getElementById('msgInput').value.trim();
+      if (q) {
+        document.getElementById('researchQuery').value = q;
+        runResearch();
+      }
+    } else {
+      sendMessage();
+    }
   }
 }
 
@@ -1370,7 +1422,10 @@ document.addEventListener('click', (e) => {
 // ==================== UTILITIES ====================
 function scrollToBottom() {
   const el = document.getElementById('messages');
-  if (el) el.scrollTop = el.scrollHeight;
+  if (!el) return;
+  el.scrollTop = el.scrollHeight;
+  requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 80);
 }
 
 function showToast(message, type = '') {
@@ -1415,9 +1470,20 @@ function copyResultBox(id) {
 
 // ==================== INIT ====================
 function init() {
-  // Redirect to index if not logged in
+  // Redirect to index if not logged in (require name or onboardingComplete)
   const user = localStorage.getItem(USER_KEY);
-  if (!user || !JSON.parse(user)?.name) {
+  if (!user) {
+    window.location.href = 'index.html';
+    return;
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(user);
+  } catch (e) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (!parsed || (!parsed.name && !parsed.onboardingComplete)) {
     window.location.href = 'index.html';
     return;
   }
