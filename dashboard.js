@@ -40,6 +40,11 @@ function loadState() {
     state.settings = { ...state.settings, ...(saved.settings || {}) };
     state.userProfile = saved.userProfile || {};
 
+    // Use Gemini API key from config.js if present (and not the placeholder)
+    if (typeof window.GEMINI_API_KEY === 'string' && window.GEMINI_API_KEY && window.GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY') {
+      state.settings.apiKey = window.GEMINI_API_KEY;
+    }
+
     // Merge user info into profile
     if (user.name && !state.userProfile.name) {
       state.userProfile.name = user.name;
@@ -1418,6 +1423,9 @@ function init() {
   }
 
   loadState();
+
+  // Persist API key from config.js to localStorage so it survives
+  if (state.settings.apiKey) saveState();
 
   // Set initial model select
   const modelSelect = document.getElementById('modelSelect');

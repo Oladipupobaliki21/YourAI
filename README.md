@@ -72,8 +72,11 @@ git clone https://github.com/YOUR_USERNAME/YourAI.git
 cd YourAI
 ```
 
-### 2. Open `index.html` in your browser
-No build tools needed — pure HTML, CSS, JavaScript!
+### 2. Run locally (recommended: use a local server)
+See **[RUN.md](RUN.md)** for step-by-step instructions (serve with `npx serve .` or Python, optional `config.js` for API keys).
+
+- **Quick start:** `npx serve .` then open **http://localhost:3000**
+- **Optional:** Copy `config.example.js` to `config.js` and add your **Gemini API key** (and **Firebase** config for Sign in with Google). `config.js` is not committed (in `.gitignore`).
 
 ### 3. Get a free Gemini API Key
 1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
@@ -82,10 +85,14 @@ No build tools needed — pure HTML, CSS, JavaScript!
 4. Copy the key
 
 ### 4. Add your API key to YourAI
-1. Open the dashboard
-2. Click the ⚙️ Settings icon (top right)
-3. Paste your API key
-4. Click "Save Settings"
+- **Option A:** Put it in `config.js` (copy from `config.example.js`) — the dashboard will use it automatically.
+- **Option B:** Open the dashboard → ⚙️ Settings → paste your API key → Save.
+
+### 5. (Optional) Sign in with Google
+1. Create a project in [Firebase Console](https://console.firebase.google.com)
+2. Enable **Authentication → Sign-in method → Google**
+3. Copy your app config into `config.js` as `window.FIREBASE_CONFIG` (see `config.example.js`)
+4. The onboarding page will show **Sign in with Google**
 
 ---
 
