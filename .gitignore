@@ -1,5 +1,6 @@
 # Local config with secrets (never commit)
 config.js
+run.md
 
 # OS
 .DS_Store

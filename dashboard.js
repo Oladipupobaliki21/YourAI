@@ -216,6 +216,9 @@ async function generateImageFromPrompt(prompt, style, aspectRatio = '1:1') {
   };
 
   let res;
+  let useFallback = false;
+  let fallbackReason = '';
+
   try {
     res = await fetch(url, {
       method: 'POST',
@@ -223,27 +226,43 @@ async function generateImageFromPrompt(prompt, style, aspectRatio = '1:1') {
       body: JSON.stringify(body)
     });
   } catch (networkErr) {
-    throw new Error('Cannot reach Gemini Imagen API. Check your connection. ' + (networkErr.message || ''));
+    useFallback = true;
+    fallbackReason = 'Cannot reach Gemini API';
   }
 
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    let msg = data?.error?.message || data?.error?.status || ('API error ' + res.status);
-    if (res.status === 400 && (String(msg).toLowerCase().includes('api_key') || String(msg).toLowerCase().includes('key'))) {
-      msg = 'Invalid or missing API key. Add your Gemini key in Settings.';
+  let data = null;
+  if (res && res.ok) {
+    data = await res.json().catch(() => ({}));
+  } else if (!useFallback) {
+    data = await res.json().catch(() => ({}));
+    useFallback = true;
+    let fallbackMsg = data?.error?.message || data?.error?.status || ('API error ' + res.status);
+    fallbackReason = `Gemini API Error: ${fallbackMsg}`;
+    if (res.status === 400 && (String(fallbackMsg).toLowerCase().includes('api_key') || String(fallbackMsg).toLowerCase().includes('key'))) {
+      throw new Error('Invalid or missing API key. Add your Gemini key in Settings.');
     }
-    throw new Error(msg);
   }
 
-  const base64Image = data.predictions?.[0]?.bytesBase64Encoded;
-  if (!base64Image) {
-    throw new Error('No image was returned from the API.');
+  // If Gemini succeeded, return its Base64 image
+  if (!useFallback && data?.predictions?.[0]?.bytesBase64Encoded) {
+    const base64Image = data.predictions[0].bytesBase64Encoded;
+    const mimeType = data.predictions[0].mimeType || 'image/jpeg';
+    return `data:${mimeType};base64,${base64Image}`;
   }
 
-  // Determine mime type based on the API response, usually image/jpeg or image/png
-  const mimeType = data.predictions?.[0]?.mimeType || 'image/jpeg';
-  return `data:${mimeType};base64,${base64Image}`;
+  // If Gemini failed or didn't return an image, fallback to Pollinations.ai
+  console.warn(`Falling back to Pollinations.ai for image generation. Reason: ${fallbackReason || 'No image data from Gemini'}`);
+
+  // Map Gemini aspect ratios to pixel dimensions 
+  let width = 1024;
+  let height = 1024;
+  if (aspectRatio === '16:9') { width = 1024; height = 576; }
+  else if (aspectRatio === '9:16') { width = 576; height = 1024; }
+
+  const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${width}&height=${height}&nologo=true&seed=${Date.now()}`;
+
+  // Return the direct URL for Pollinations.ai
+  return fallbackUrl;
 }
 
 // ==================== SYSTEM PROMPTS ====================
@@ -1246,10 +1265,17 @@ function isMobileSidebar() {
 
 function toggleSidebar(ev) {
   if (ev) ev.preventDefault();
-  if (isMobileSidebar()) {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('open')) closeSidebar();
-    else openSidebar();
+
+  const isMobile = isMobileSidebar();
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  if (isMobile) {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
   } else {
     document.body.classList.toggle('sidebar-collapsed');
   }
@@ -1259,21 +1285,24 @@ function openSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
   sidebar.classList.add('open');
-  if (isMobileSidebar()) overlay.classList.add('visible');
-  else document.body.classList.remove('sidebar-collapsed');
-}
+  document.body.classList.remove('sidebar-collapsed');
 
-function sidebarCloseClick() {
   if (isMobileSidebar()) {
-    closeSidebar();
-  } else {
-    document.body.classList.add('sidebar-collapsed');
+    overlay.classList.add('visible');
   }
 }
 
+function sidebarCloseClick() {
+  closeSidebar();
+}
+
 function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('visible');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  sidebar.classList.remove('open');
+  overlay.classList.remove('visible');
+  document.body.classList.add('sidebar-collapsed');
 }
 
 // ==================== SETTINGS ====================
