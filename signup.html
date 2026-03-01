@@ -1,28 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign-Up Page</title>
-    <link rel="stylesheet" href="signup.css">
-   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create account — YourAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="signup.css">
 </head>
 <body>
-    <div class="signup-form">
-        <h2>Sign Up</h2>
-        <form action="/signup" method="post">
-            <label for="email">Enter your email:</label><br>
-            <input type="email" id="email" name="email" required placeholder="12345678@gmail.com" ><br><br>
+  <div class="signup-page">
+    <header class="signup-header">
+      <a href="index.html" class="signup-logo">
+        <span class="signup-logo-mark">Y</span>
+        YourAI
+      </a>
+      <h1>Create account</h1>
+      <p>Sign up to use your personal AI dashboard.</p>
+    </header>
 
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password" required placeholder="**************"><br><br>
+    <form id="signupForm" class="signup-form" onsubmit="handleSignup(event)">
+      <button type="button" class="google-btn" id="googleSignUpBtn" onclick="handleGoogleSignUp()">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Sign up with Google
+      </button>
+      <div class="signup-divider">or</div>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required minlength="6" autocomplete="new-password">
+      </div>
+      <p class="signup-error" id="signupError"></p>
+      <button type="submit" class="submit-btn" id="signupBtn">Create account</button>
+    </form>
 
-            <label for="confirm-password">Confirm Password:</label><br>
-            <input type="password" id="confirm-password" name="confirm-password" required placeholder="*************"><br><br>
+    <p class="signup-footer">
+      Already have an account? <a href="index.html#auth">Sign in</a>
+    </p>
+  </div>
 
+  <script src="config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script>
+    (function() {
+      var user = localStorage.getItem('yourAI_user');
+      if (user) {
+        try {
+          var parsed = JSON.parse(user);
+          if (parsed && parsed.onboardingComplete) {
+            window.location.href = 'dashboard.html';
+            return;
+          }
+        } catch (e) {}
+      }
+    })();
 
-            <input type="submit" value="Sign Up" class="submit-btn">
-        </form>
-    </div>
+    function handleSignup(e) {
+      e.preventDefault();
+      var errEl = document.getElementById('signupError');
+      var btn = document.getElementById('signupBtn');
+      errEl.classList.remove('show');
+      errEl.textContent = '';
+
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim().toLowerCase();
+      var password = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!name) {
+        errEl.textContent = 'Enter your name.';
+        errEl.classList.add('show');
+        return;
+      }
+      if (password.length < 6) {
+        errEl.textContent = 'Password must be at least 6 characters.';
+        errEl.classList.add('show');
+        return;
+      }
+      if (password !== confirmPassword) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+
+      var users = [];
+      try {
+        var stored = localStorage.getItem('yourAI_users');
+        if (stored) users = JSON.parse(stored);
+      } catch (err) {}
+
+      var exists = users.some(function(u) { return u.email === email; });
+      if (exists) {
+        errEl.textContent = 'An account with this email already exists. Sign in instead.';
+        errEl.classList.add('show');
+        btn.disabled = false;
+        return;
+      }
+
+      users.push({ name: name, email: email, password: password });
+      localStorage.setItem('yourAI_users', JSON.stringify(users));
+
+      var user = {
+        name: name,
+        email: email,
+        onboardingComplete: true,
+        lastLogin: Date.now(),
+        profileComplete: false,
+        conversations: [],
+        settings: { theme: 'dark', model: 'gemini-1.5-flash' }
+      };
+      localStorage.setItem('yourAI_user', JSON.stringify(user));
+
+      window.location.href = 'dashboard.html';
+    }
+
+    var firebaseAuth = null;
+    function getFirebaseAuth() {
+      if (firebaseAuth) return firebaseAuth;
+      var config = typeof window.FIREBASE_CONFIG !== 'undefined' && window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && window.FIREBASE_CONFIG.apiKey !== 'YOUR_FIREBASE_API_KEY' ? window.FIREBASE_CONFIG : null;
+      if (!config || typeof firebase === 'undefined') return null;
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(config);
+        firebaseAuth = firebase.auth();
+        return firebaseAuth;
+      } catch (e) { console.warn('Firebase init error:', e); return null; }
+    }
+
+    function handleGoogleSignUp() {
+      var auth = getFirebaseAuth();
+      if (!auth) {
+        alert('Sign up with Google is not configured yet.\n\n1. Copy config.example.js to config.js\n2. Add your Firebase config and enable Google sign-in.');
+        return;
+      }
+      var btn = document.getElementById('googleSignUpBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Signing up...'; }
+      var provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(function(result) {
+          var u = result.user;
+          var name = u.displayName || (u.email && u.email.split('@')[0]) || 'User';
+          var user = { name: name, email: u.email || '', photoURL: u.photoURL || '', uid: u.uid, onboardingComplete: true, lastLogin: Date.now(), profileComplete: false, conversations: [], settings: { theme: 'dark', model: 'gemini-1.5-flash' } };
+          localStorage.setItem('yourAI_user', JSON.stringify(user));
+          window.location.href = 'dashboard.html';
+        })
+        .catch(function(err) {
+          if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign up with Google'; }
+          alert('Sign up failed: ' + (err.message || 'Unknown error'));
+        });
+    }
+  </script>
 </body>
 </html>
