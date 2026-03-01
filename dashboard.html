@@ -1,592 +1,751 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YourAI Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hlTheme">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    id="hlTheme">
   <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-<!-- Sidebar Overlay (mobile) -->
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<!-- ==================== SIDEBAR ==================== -->
-<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
-  <div class="sidebar-header">
-    <div class="logo">
-      <div class="logo-mark">Y</div>
-      <span class="logo-text">YourAI</span>
-    </div>
-    <button type="button" class="icon-btn sidebar-close" onclick="sidebarCloseClick()" title="Close sidebar">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-
-  <button class="new-chat-btn" onclick="newChat()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-    New Chat
-  </button>
-
-  <nav class="sidebar-nav">
-    <button class="nav-item active" data-mode="chat" onclick="switchMode('chat')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>Chat</span>
-    </button>
-    <button class="nav-item" data-mode="research" onclick="switchMode('research')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <span>Research</span>
-    </button>
-
-    <div class="nav-group-label">Create</div>
-    <button class="nav-item" data-mode="image" onclick="switchMode('image')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-      <span>Image Generator</span>
-    </button>
-    <button class="nav-item" data-mode="email" onclick="switchMode('email')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <span>Email Drafts</span>
-    </button>
-    <button class="nav-item" data-mode="video" onclick="switchMode('video')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      <span>Video Scripts</span>
-    </button>
-
-    <div class="nav-group-label">Personal</div>
-    <button class="nav-item" data-mode="profile" onclick="switchMode('profile')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>My Profile</span>
-    </button>
-    <button class="nav-item" data-mode="history" onclick="switchMode('history')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
-      <span>History</span>
-    </button>
-  </nav>
-
-  <!-- Recent Chats -->
-  <div class="history-sidebar">
-    <div class="history-label">Recent</div>
-    <div id="recentChats" class="recent-list"></div>
-  </div>
-
-  <!-- Sidebar Footer -->
-  <div class="sidebar-footer">
-    <div class="user-chip" id="userChip" onclick="switchMode('profile')">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-meta">
-        <span class="user-name" id="userName">Loading...</span>
-        <span class="user-sub">View Profile</span>
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-mark">Y</div>
+        <span class="logo-text">YourAI</span>
       </div>
+      <button type="button" class="icon-btn sidebar-close" onclick="sidebarCloseClick()" title="Close sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-    <button class="icon-btn" onclick="openSettings()" title="Settings">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+
+    <button class="new-chat-btn" onclick="newChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      New Chat
     </button>
-  </div>
-</aside>
 
-<!-- ==================== MAIN CONTENT ==================== -->
-<main class="main" id="main">
-
-  <!-- Top Bar -->
-  <header class="topbar" role="banner">
-    <div class="topbar-left">
-      <button type="button" class="icon-btn hamburger" id="hamburgerBtn" onclick="toggleSidebar(event)" title="Toggle sidebar" aria-label="Toggle sidebar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-mode="chat" onclick="switchMode('chat')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span>Chat</span>
       </button>
-      <h1 class="page-title" id="pageTitle">Chat</h1>
+      <button class="nav-item" data-mode="research" onclick="switchMode('research')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <span>Research</span>
+      </button>
+
+      <div class="nav-group-label">Create</div>
+      <button class="nav-item" data-mode="image" onclick="switchMode('image')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="9" cy="9" r="2" />
+          <path d="m21 15-5-5L5 21" />
+        </svg>
+        <span>Image Generator</span>
+      </button>
+      <button class="nav-item" data-mode="email" onclick="switchMode('email')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
+        </svg>
+        <span>Email Drafts</span>
+      </button>
+      <button class="nav-item" data-mode="video" onclick="switchMode('video')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="23 7 16 12 23 17 23 7" />
+          <rect x="1" y="5" width="15" height="14" rx="2" />
+        </svg>
+        <span>Video Scripts</span>
+      </button>
+
+      <div class="nav-group-label">Personal</div>
+      <button class="nav-item" data-mode="profile" onclick="switchMode('profile')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span>My Profile</span>
+      </button>
+      <button class="nav-item" data-mode="history" onclick="switchMode('history')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="1 4 1 10 7 10" />
+          <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
+        </svg>
+        <span>History</span>
+      </button>
+    </nav>
+
+    <!-- Recent Chats -->
+    <div class="history-sidebar">
+      <div class="history-label">Recent</div>
+      <div id="recentChats" class="recent-list"></div>
     </div>
-    <div class="topbar-center">
-      <div class="model-select-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        <select id="modelSelect" class="model-select" onchange="changeModel(this.value)">
-          <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-        </select>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="user-chip" id="userChip" onclick="switchMode('profile')">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-meta">
+          <span class="user-name" id="userName">Loading...</span>
+          <span class="user-sub">View Profile</span>
+        </div>
       </div>
-    </div>
-    <div class="topbar-right">
-      <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <button class="icon-btn" id="callBtn" onclick="startVoiceCall()" title="Voice call mode">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1.26h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6 6l1.11-1.11a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16z"/></svg>
-      </button>
-      <button class="icon-btn" onclick="clearChat()" title="Clear chat" id="clearBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      </button>
       <button class="icon-btn" onclick="openSettings()" title="Settings">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
       </button>
     </div>
-  </header>
+  </aside>
 
-  <!-- ==================== PANELS ==================== -->
-  <div class="panels-container">
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="main" id="main">
 
-    <!-- CHAT PANEL -->
-    <div class="panel active" id="chatPanel">
-      <!-- Welcome screen -->
-      <div class="welcome" id="welcome">
-        <div class="welcome-logo">
-          <div class="welcome-logo-icon">Y</div>
-        </div>
-        <h2 id="welcomeMsg">How can I help?</h2>
-        <p id="welcomeSub">Chat, research, or create. Ask anything.</p>
-        <div class="quick-actions" id="quickActions">
-          <button class="quick-btn" onclick="quickPrompt('Research the latest trends in AI for 2026')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            Research AI trends
-          </button>
-          <button class="quick-btn" onclick="quickPrompt('Write a professional email introducing myself to a potential client')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Draft email
-          </button>
-          <button class="quick-btn" onclick="quickPrompt('Help me analyze my personality and suggest ways to improve')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Personality tips
-          </button>
-          <button class="quick-btn" onclick="quickPrompt('Explain quantum computing in simple terms with examples')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Explain complex topic
-          </button>
-          <button class="quick-btn" onclick="switchMode('image')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-            Generate image
-          </button>
-          <button class="quick-btn" onclick="switchMode('video')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            Video script
-          </button>
+    <!-- Top Bar -->
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn hamburger" id="hamburgerBtn" onclick="toggleSidebar(event)"
+          title="Toggle sidebar" aria-label="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+        <h1 class="page-title" id="pageTitle">Chat</h1>
+      </div>
+      <div class="topbar-center">
+        <div class="model-select-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4l3 3" />
+          </svg>
+          <select id="modelSelect" class="model-select" onchange="changeModel(this.value)">
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+            <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
+          </select>
         </div>
       </div>
-      <!-- Messages area -->
-      <div class="messages" id="messages"></div>
-    </div>
+      <div class="topbar-right">
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            id="themeIcon">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="callBtn" onclick="startVoiceCall()" title="Voice call mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1.26h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6 6l1.11-1.11a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16z" />
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="clearChat()" title="Clear chat" id="clearBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="openSettings()" title="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+      </div>
+    </header>
 
-    <!-- RESEARCH PANEL -->
-    <div class="panel" id="researchPanel">
-      <div class="tool-panel">
-        <div class="tool-header">
-          <div class="tool-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <!-- ==================== PANELS ==================== -->
+    <div class="panels-container">
+
+      <!-- CHAT PANEL -->
+      <div class="panel active" id="chatPanel">
+        <!-- Welcome screen -->
+        <div class="welcome" id="welcome">
+          <div class="welcome-logo">
+            <div class="welcome-logo-icon">Y</div>
           </div>
-          <div>
-            <h2>Research</h2>
-            <p>Structured research with Gemini</p>
-          </div>
-        </div>
-        <div class="research-input-box">
-          <textarea id="researchQuery" placeholder="What do you want to research? Ask anything..." rows="3"></textarea>
-          <div class="research-options">
-            <select id="researchDepth">
-              <option value="overview">Quick Overview</option>
-              <option value="detailed" selected>Detailed Analysis</option>
-              <option value="expert">Expert Deep Dive</option>
-            </select>
-            <button class="primary-btn" onclick="runResearch()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              Research
+          <h2 id="welcomeMsg">How can I help?</h2>
+          <p id="welcomeSub">Chat, research, or create. Ask anything.</p>
+          <div class="quick-actions" id="quickActions">
+            <button class="quick-btn" onclick="quickPrompt('Research the latest trends in AI for 2026')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              Research AI trends
+            </button>
+            <button class="quick-btn"
+              onclick="quickPrompt('Write a professional email introducing myself to a potential client')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              Draft email
+            </button>
+            <button class="quick-btn"
+              onclick="quickPrompt('Help me analyze my personality and suggest ways to improve')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Personality tips
+            </button>
+            <button class="quick-btn" onclick="quickPrompt('Explain quantum computing in simple terms with examples')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              Explain complex topic
+            </button>
+            <button class="quick-btn" onclick="switchMode('image')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              Generate image
+            </button>
+            <button class="quick-btn" onclick="switchMode('video')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" />
+              </svg>
+              Video script
             </button>
           </div>
         </div>
-        <div id="researchResult" class="research-result hidden"></div>
+        <!-- Messages area -->
+        <div class="messages" id="messages"></div>
       </div>
-    </div>
 
-    <!-- IMAGE PANEL -->
-    <div class="panel" id="imagePanel">
-      <div class="tool-panel">
-        <div class="tool-header">
-          <div class="tool-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+      <!-- RESEARCH PANEL -->
+      <div class="panel" id="researchPanel">
+        <div class="tool-panel">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </div>
+            <div>
+              <h2>Research</h2>
+              <p>Structured research with Gemini</p>
+            </div>
           </div>
-          <div>
-            <h2>Image Generator</h2>
-            <p>Create images from text</p>
+          <div class="research-input-box">
+            <textarea id="researchQuery" placeholder="What do you want to research? Ask anything..."
+              rows="3"></textarea>
+            <div class="research-options">
+              <select id="researchDepth">
+                <option value="overview">Quick Overview</option>
+                <option value="detailed" selected>Detailed Analysis</option>
+                <option value="expert">Expert Deep Dive</option>
+              </select>
+              <button class="primary-btn" onclick="runResearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                Research
+              </button>
+            </div>
           </div>
+          <div id="researchResult" class="research-result hidden"></div>
         </div>
-        <div class="form-grid">
-          <div class="form-field full">
-            <label>Describe your image</label>
-            <textarea id="imagePrompt" placeholder="A futuristic city at night with neon lights reflecting on rain-soaked streets..." rows="3"></textarea>
-          </div>
-          <div class="form-field">
-            <label>Style</label>
-            <select id="imageStyle">
-              <option value="photorealistic">Photorealistic</option>
-              <option value="digital art">Digital Art</option>
-              <option value="anime style">Anime</option>
-              <option value="oil painting">Oil Painting</option>
-              <option value="watercolor">Watercolor</option>
-              <option value="cyberpunk">Cyberpunk</option>
-              <option value="minimalist">Minimalist</option>
-              <option value="3D render">3D Render</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Aspect Ratio</label>
-            <select id="imageRatio">
-              <option value="1024x1024">Square (1:1)</option>
-              <option value="1280x720">Landscape (16:9)</option>
-              <option value="720x1280">Portrait (9:16)</option>
-            </select>
-          </div>
-        </div>
-        <button class="primary-btn" onclick="generateImage()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Generate Image
-        </button>
-        <div id="imageResult" class="image-result hidden"></div>
       </div>
-    </div>
 
-    <!-- EMAIL PANEL -->
-    <div class="panel" id="emailPanel">
-      <div class="tool-panel">
-        <div class="tool-header">
-          <div class="tool-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <!-- IMAGE PANEL -->
+      <div class="panel" id="imagePanel">
+        <div class="tool-panel">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+            </div>
+            <div>
+              <h2>Image Generator</h2>
+              <p>Create images from text</p>
+            </div>
           </div>
-          <div>
-            <h2>Email Drafts</h2>
-            <p>AI email writing</p>
+          <div class="form-grid">
+            <div class="form-field full">
+              <label>Describe your image</label>
+              <textarea id="imagePrompt"
+                placeholder="A futuristic city at night with neon lights reflecting on rain-soaked streets..."
+                rows="3"></textarea>
+            </div>
+            <div class="form-field">
+              <label>Style</label>
+              <select id="imageStyle">
+                <option value="photorealistic">Photorealistic</option>
+                <option value="digital art">Digital Art</option>
+                <option value="anime style">Anime</option>
+                <option value="oil painting">Oil Painting</option>
+                <option value="watercolor">Watercolor</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="3D render">3D Render</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Aspect Ratio</label>
+              <select id="imageRatio">
+                <option value="1:1">Square (1:1)</option>
+                <option value="16:9">Landscape (16:9)</option>
+                <option value="9:16">Portrait (9:16)</option>
+              </select>
+            </div>
           </div>
+          <button class="primary-btn" onclick="generateImage()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            Generate Image
+          </button>
+          <div id="imageResult" class="image-result hidden"></div>
         </div>
-        <div class="form-grid">
-          <div class="form-field">
-            <label>Email Type</label>
-            <select id="emailType">
-              <option value="professional introduction">Professional Introduction</option>
-              <option value="follow-up">Follow-up</option>
-              <option value="job application">Job Application</option>
-              <option value="thank you">Thank You</option>
-              <option value="apology">Apology</option>
-              <option value="cold outreach">Cold Outreach</option>
-              <option value="newsletter">Newsletter</option>
-              <option value="complaint">Complaint</option>
-              <option value="proposal">Business Proposal</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Tone</label>
-            <select id="emailTone">
-              <option value="professional">Professional</option>
-              <option value="friendly">Friendly</option>
-              <option value="formal">Formal</option>
-              <option value="casual">Casual</option>
-              <option value="urgent">Urgent</option>
-              <option value="persuasive">Persuasive</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Recipient Name (optional)</label>
-            <input type="text" id="emailRecipient" placeholder="e.g. John, Dr. Smith, Team">
-          </div>
-          <div class="form-field">
-            <label>Your Name (optional)</label>
-            <input type="text" id="emailSender" placeholder="Auto-filled from profile">
-          </div>
-          <div class="form-field full">
-            <label>Key Points / Context</label>
-            <textarea id="emailContext" placeholder="What is this email about? Key points to include..." rows="3"></textarea>
-          </div>
-        </div>
-        <button class="primary-btn" onclick="generateEmail()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Generate Email
-        </button>
-        <div id="emailResult" class="result-box hidden"></div>
       </div>
-    </div>
 
-    <!-- VIDEO PANEL -->
-    <div class="panel" id="videoPanel">
-      <div class="tool-panel">
-        <div class="tool-header">
-          <div class="tool-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      <!-- EMAIL PANEL -->
+      <div class="panel" id="emailPanel">
+        <div class="tool-panel">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </div>
+            <div>
+              <h2>Email Drafts</h2>
+              <p>AI email writing</p>
+            </div>
           </div>
-          <div>
-            <h2>Video Scripts</h2>
-            <p>Scripts for video content</p>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Email Type</label>
+              <select id="emailType">
+                <option value="professional introduction">Professional Introduction</option>
+                <option value="follow-up">Follow-up</option>
+                <option value="job application">Job Application</option>
+                <option value="thank you">Thank You</option>
+                <option value="apology">Apology</option>
+                <option value="cold outreach">Cold Outreach</option>
+                <option value="newsletter">Newsletter</option>
+                <option value="complaint">Complaint</option>
+                <option value="proposal">Business Proposal</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Tone</label>
+              <select id="emailTone">
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="formal">Formal</option>
+                <option value="casual">Casual</option>
+                <option value="urgent">Urgent</option>
+                <option value="persuasive">Persuasive</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Recipient Name (optional)</label>
+              <input type="text" id="emailRecipient" placeholder="e.g. John, Dr. Smith, Team">
+            </div>
+            <div class="form-field">
+              <label>Your Name (optional)</label>
+              <input type="text" id="emailSender" placeholder="Auto-filled from profile">
+            </div>
+            <div class="form-field full">
+              <label>Key Points / Context</label>
+              <textarea id="emailContext" placeholder="What is this email about? Key points to include..."
+                rows="3"></textarea>
+            </div>
           </div>
+          <button class="primary-btn" onclick="generateEmail()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            Generate Email
+          </button>
+          <div id="emailResult" class="result-box hidden"></div>
         </div>
-        <div class="form-grid">
-          <div class="form-field full">
-            <label>Video Topic</label>
-            <textarea id="videoTopic" placeholder="What is your video about? e.g. '10 tips for productivity in 2026'" rows="2"></textarea>
-          </div>
-          <div class="form-field">
-            <label>Video Type</label>
-            <select id="videoType">
-              <option value="YouTube tutorial">YouTube Tutorial</option>
-              <option value="YouTube vlog">YouTube Vlog</option>
-              <option value="TikTok short">TikTok Short</option>
-              <option value="Instagram reel">Instagram Reel</option>
-              <option value="documentary">Documentary</option>
-              <option value="product review">Product Review</option>
-              <option value="explainer video">Explainer Video</option>
-              <option value="educational">Educational</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Duration</label>
-            <select id="videoDuration">
-              <option value="30-60 seconds">Short (30-60s)</option>
-              <option value="3-5 minutes" selected>Medium (3-5 min)</option>
-              <option value="10-15 minutes">Long (10-15 min)</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Target Audience</label>
-            <input type="text" id="videoAudience" placeholder="e.g. Beginners, Tech enthusiasts, Students">
-          </div>
-          <div class="form-field">
-            <label>Call to Action</label>
-            <input type="text" id="videoCTA" placeholder="e.g. Subscribe, Visit our website">
-          </div>
-        </div>
-        <button class="primary-btn" onclick="generateVideoScript()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Generate Script
-        </button>
-        <div id="videoResult" class="result-box hidden"></div>
       </div>
-    </div>
 
-    <!-- PROFILE PANEL -->
-    <div class="panel" id="profilePanel">
-      <div class="profile-panel-content">
-        <div class="profile-hero">
-          <div class="profile-avatar-large" id="profileAvatarLarge">?</div>
-          <h2 id="profileNameLarge">Your Profile</h2>
-          <p id="profileBioLarge" style="color:var(--text-muted); font-size:0.9rem;">Set up your profile to personalize YourAI</p>
+      <!-- VIDEO PANEL -->
+      <div class="panel" id="videoPanel">
+        <div class="tool-panel">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" />
+              </svg>
+            </div>
+            <div>
+              <h2>Video Scripts</h2>
+              <p>Scripts for video content</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-field full">
+              <label>Video Topic</label>
+              <textarea id="videoTopic" placeholder="What is your video about? e.g. '10 tips for productivity in 2026'"
+                rows="2"></textarea>
+            </div>
+            <div class="form-field">
+              <label>Video Type</label>
+              <select id="videoType">
+                <option value="YouTube tutorial">YouTube Tutorial</option>
+                <option value="YouTube vlog">YouTube Vlog</option>
+                <option value="TikTok short">TikTok Short</option>
+                <option value="Instagram reel">Instagram Reel</option>
+                <option value="documentary">Documentary</option>
+                <option value="product review">Product Review</option>
+                <option value="explainer video">Explainer Video</option>
+                <option value="educational">Educational</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Duration</label>
+              <select id="videoDuration">
+                <option value="30-60 seconds">Short (30-60s)</option>
+                <option value="3-5 minutes" selected>Medium (3-5 min)</option>
+                <option value="10-15 minutes">Long (10-15 min)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Target Audience</label>
+              <input type="text" id="videoAudience" placeholder="e.g. Beginners, Tech enthusiasts, Students">
+            </div>
+            <div class="form-field">
+              <label>Call to Action</label>
+              <input type="text" id="videoCTA" placeholder="e.g. Subscribe, Visit our website">
+            </div>
+          </div>
+          <button class="primary-btn" onclick="generateVideoScript()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            Generate Script
+          </button>
+          <div id="videoResult" class="result-box hidden"></div>
         </div>
-        <div class="profile-grid">
-          <div class="profile-section">
-            <h3>Personal Details</h3>
-            <div class="form-grid">
-              <div class="form-field">
-                <label>Full Name</label>
-                <input type="text" id="pName" placeholder="Your name">
+      </div>
+
+      <!-- PROFILE PANEL -->
+      <div class="panel" id="profilePanel">
+        <div class="profile-panel-content">
+          <div class="profile-hero">
+            <div class="profile-avatar-large" id="profileAvatarLarge">?</div>
+            <h2 id="profileNameLarge">Your Profile</h2>
+            <p id="profileBioLarge" style="color:var(--text-muted); font-size:0.9rem;">Set up your profile to
+              personalize YourAI</p>
+          </div>
+          <div class="profile-grid">
+            <div class="profile-section">
+              <h3>Personal Details</h3>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Full Name</label>
+                  <input type="text" id="pName" placeholder="Your name">
+                </div>
+                <div class="form-field">
+                  <label>Profession / Role</label>
+                  <input type="text" id="pRole" placeholder="e.g. Developer, Designer, Student">
+                </div>
+                <div class="form-field full">
+                  <label>Bio / About You</label>
+                  <textarea id="pBio"
+                    placeholder="Tell YourAI about yourself — your background, goals, and what you're working on..."
+                    rows="3"></textarea>
+                </div>
+                <div class="form-field full">
+                  <label>Interests & Hobbies</label>
+                  <input type="text" id="pInterests" placeholder="e.g. AI, music production, cooking, fitness">
+                </div>
               </div>
-              <div class="form-field">
-                <label>Profession / Role</label>
-                <input type="text" id="pRole" placeholder="e.g. Developer, Designer, Student">
-              </div>
-              <div class="form-field full">
-                <label>Bio / About You</label>
-                <textarea id="pBio" placeholder="Tell YourAI about yourself — your background, goals, and what you're working on..." rows="3"></textarea>
-              </div>
-              <div class="form-field full">
-                <label>Interests & Hobbies</label>
-                <input type="text" id="pInterests" placeholder="e.g. AI, music production, cooking, fitness">
+            </div>
+            <div class="profile-section">
+              <h3>Social Profiles</h3>
+              <p class="section-desc-sm">YourAI uses these to understand your online presence and give personalized
+                insights.</p>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>GitHub</label>
+                  <input type="url" id="pGithub" placeholder="https://github.com/username">
+                </div>
+                <div class="form-field">
+                  <label>LinkedIn</label>
+                  <input type="url" id="pLinkedin" placeholder="https://linkedin.com/in/username">
+                </div>
+                <div class="form-field">
+                  <label>Twitter / X</label>
+                  <input type="url" id="pTwitter" placeholder="https://x.com/username">
+                </div>
+                <div class="form-field">
+                  <label>Instagram</label>
+                  <input type="url" id="pInstagram" placeholder="https://instagram.com/username">
+                </div>
+                <div class="form-field">
+                  <label>Portfolio / Website</label>
+                  <input type="url" id="pWebsite" placeholder="https://yoursite.com">
+                </div>
+                <div class="form-field">
+                  <label>Linktree</label>
+                  <input type="url" id="pLinktree" placeholder="https://linktr.ee/username">
+                </div>
               </div>
             </div>
           </div>
-          <div class="profile-section">
-            <h3>Social Profiles</h3>
-            <p class="section-desc-sm">YourAI uses these to understand your online presence and give personalized insights.</p>
-            <div class="form-grid">
-              <div class="form-field">
-                <label>GitHub</label>
-                <input type="url" id="pGithub" placeholder="https://github.com/username">
-              </div>
-              <div class="form-field">
-                <label>LinkedIn</label>
-                <input type="url" id="pLinkedin" placeholder="https://linkedin.com/in/username">
-              </div>
-              <div class="form-field">
-                <label>Twitter / X</label>
-                <input type="url" id="pTwitter" placeholder="https://x.com/username">
-              </div>
-              <div class="form-field">
-                <label>Instagram</label>
-                <input type="url" id="pInstagram" placeholder="https://instagram.com/username">
-              </div>
-              <div class="form-field">
-                <label>Portfolio / Website</label>
-                <input type="url" id="pWebsite" placeholder="https://yoursite.com">
-              </div>
-              <div class="form-field">
-                <label>Linktree</label>
-                <input type="url" id="pLinktree" placeholder="https://linktr.ee/username">
-              </div>
+          <div class="profile-actions">
+            <button class="primary-btn" onclick="saveProfile()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              Save Profile
+            </button>
+            <button class="secondary-btn" onclick="analyzeProfile()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              Analyze My Profile with AI
+            </button>
+          </div>
+          <div id="profileAnalysis" class="result-box hidden profile-analysis-box"></div>
+        </div>
+      </div>
+
+      <!-- HISTORY PANEL -->
+      <div class="panel" id="historyPanel">
+        <div class="tool-panel">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
+              </svg>
+            </div>
+            <div>
+              <h2>Chat History</h2>
+              <p>All your saved conversations</p>
             </div>
           </div>
+          <div id="historyList" class="history-list-panel"></div>
         </div>
-        <div class="profile-actions">
-          <button class="primary-btn" onclick="saveProfile()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Save Profile
-          </button>
-          <button class="secondary-btn" onclick="analyzeProfile()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Analyze My Profile with AI
-          </button>
+      </div>
+
+    </div><!-- end panels-container -->
+
+    <!-- ==================== INPUT AREA ==================== -->
+    <div class="input-area" id="inputArea">
+      <!-- Attachment Preview -->
+      <div class="attach-preview" id="attachPreview"></div>
+      <!-- Toolbar -->
+      <div class="input-toolbar">
+        <input type="file" id="fileInput" hidden
+          accept=".txt,.pdf,.doc,.docx,.csv,.md,.js,.py,.html,.css,.json,image/*">
+        <button class="toolbar-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+          </svg>
+        </button>
+        <button class="toolbar-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </button>
+        <div class="recording-pill hidden" id="recordingPill">
+          <span class="rec-dot"></span> Recording...
         </div>
-        <div id="profileAnalysis" class="result-box hidden profile-analysis-box"></div>
+        <button class="toolbar-btn" onclick="insertTemplate('email')" title="Email template">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+        </button>
+        <button class="toolbar-btn" onclick="insertTemplate('code')" title="Ask to write code">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+          </svg>
+        </button>
+        <button class="toolbar-btn" onclick="insertTemplate('summarize')" title="Summarize something">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+        </button>
+        <div class="toolbar-spacer"></div>
+        <span class="char-count" id="charCount">0</span>
+      </div>
+      <!-- Main Input Row -->
+      <div class="input-row">
+        <textarea id="msgInput" placeholder="Message YourAI..." rows="1" onkeydown="handleInputKey(event)"
+          oninput="handleInputChange(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
+      <div class="input-footer">
+        <span>YourAI can make mistakes. Verify important info.</span>
       </div>
     </div>
 
-    <!-- HISTORY PANEL -->
-    <div class="panel" id="historyPanel">
-      <div class="tool-panel">
-        <div class="tool-header">
-          <div class="tool-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="icon-btn" onclick="closeModal('settingsModal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label>Gemini API Key</label>
+          <p class="setting-desc">Get your free API key from <a href="https://aistudio.google.com/app/apikey"
+              target="_blank">Google AI Studio</a></p>
+          <div class="api-key-input">
+            <input type="password" id="apiKeyInput" placeholder="AIza...">
+            <button class="icon-btn" onclick="toggleApiKeyVisibility()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                id="eyeIcon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
           </div>
-          <div>
-            <h2>Chat History</h2>
-            <p>All your saved conversations</p>
+        </div>
+        <div class="setting-group">
+          <label>Default Model</label>
+          <select id="settingsModel">
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+            <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label>Theme</label>
+          <div class="theme-options">
+            <button class="theme-opt active" id="darkOpt" onclick="setTheme('dark')">🌙 Dark</button>
+            <button class="theme-opt" id="lightOpt" onclick="setTheme('light')">☀️ Light</button>
           </div>
         </div>
-        <div id="historyList" class="history-list-panel"></div>
+        <div class="setting-group">
+          <label>AI Voice</label>
+          <div class="toggle-row">
+            <span>Enable AI voice responses (Text-to-Speech)</span>
+            <label class="toggle">
+              <input type="checkbox" id="ttsToggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label>Clear All Data</label>
+          <button class="danger-btn" onclick="clearAllData()">Clear All Conversations & Data</button>
+        </div>
       </div>
-    </div>
-
-  </div><!-- end panels-container -->
-
-  <!-- ==================== INPUT AREA ==================== -->
-  <div class="input-area" id="inputArea">
-    <!-- Attachment Preview -->
-    <div class="attach-preview" id="attachPreview"></div>
-    <!-- Toolbar -->
-    <div class="input-toolbar">
-      <input type="file" id="fileInput" hidden accept=".txt,.pdf,.doc,.docx,.csv,.md,.js,.py,.html,.css,.json,image/*">
-      <button class="toolbar-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-      </button>
-      <button class="toolbar-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      </button>
-      <div class="recording-pill hidden" id="recordingPill">
-        <span class="rec-dot"></span> Recording...
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="closeModal('settingsModal')">Cancel</button>
+        <button class="primary-btn" onclick="saveSettings()">Save Settings</button>
       </div>
-      <button class="toolbar-btn" onclick="insertTemplate('email')" title="Email template">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </button>
-      <button class="toolbar-btn" onclick="insertTemplate('code')" title="Ask to write code">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      </button>
-      <button class="toolbar-btn" onclick="insertTemplate('summarize')" title="Summarize something">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      </button>
-      <div class="toolbar-spacer"></div>
-      <span class="char-count" id="charCount">0</span>
-    </div>
-    <!-- Main Input Row -->
-    <div class="input-row">
-      <textarea id="msgInput" placeholder="Message YourAI..." rows="1" onkeydown="handleInputKey(event)" oninput="handleInputChange(this)"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-    <div class="input-footer">
-      <span>YourAI can make mistakes. Verify important info.</span>
     </div>
   </div>
 
-</main>
-
-<!-- ==================== MODALS ==================== -->
-
-<!-- Settings Modal -->
-<div class="modal-backdrop" id="settingsModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Settings</h3>
-      <button class="icon-btn" onclick="closeModal('settingsModal')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="setting-group">
-        <label>Gemini API Key</label>
-        <p class="setting-desc">Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a></p>
-        <div class="api-key-input">
-          <input type="password" id="apiKeyInput" placeholder="AIza...">
-          <button class="icon-btn" onclick="toggleApiKeyVisibility()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
-        </div>
+  <!-- Voice Call Modal -->
+  <div class="modal-backdrop" id="callModal">
+    <div class="modal call-modal">
+      <div class="call-avatar">
+        <div class="call-avatar-ring"></div>
+        <div class="call-avatar-ring call-avatar-ring2"></div>
+        <div class="call-avatar-icon">Y</div>
       </div>
-      <div class="setting-group">
-        <label>Default Model</label>
-        <select id="settingsModel">
-          <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash (Balanced)</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro (Most Capable)</option>
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-        </select>
+      <h3 id="callStatus">YourAI</h3>
+      <p id="callSubStatus" style="color:var(--text-muted); font-size:0.875rem;">Tap mic to speak</p>
+      <div class="call-transcript" id="callTranscript"></div>
+      <div class="call-controls">
+        <button class="call-btn mute-btn" id="callMuteBtn" onclick="toggleCallMic()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </button>
+        <button class="call-btn end-btn" onclick="endVoiceCall()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.43 9.88a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.54 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.67 8.65M18 2l-9 9" />
+          </svg>
+        </button>
+        <button class="call-btn speaker-btn" id="callSpeakerBtn" onclick="toggleCallSpeaker()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+        </button>
       </div>
-      <div class="setting-group">
-        <label>Theme</label>
-        <div class="theme-options">
-          <button class="theme-opt active" id="darkOpt" onclick="setTheme('dark')">🌙 Dark</button>
-          <button class="theme-opt" id="lightOpt" onclick="setTheme('light')">☀️ Light</button>
-        </div>
-      </div>
-      <div class="setting-group">
-        <label>AI Voice</label>
-        <div class="toggle-row">
-          <span>Enable AI voice responses (Text-to-Speech)</span>
-          <label class="toggle">
-            <input type="checkbox" id="ttsToggle">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-      <div class="setting-group">
-        <label>Clear All Data</label>
-        <button class="danger-btn" onclick="clearAllData()">Clear All Conversations & Data</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="secondary-btn" onclick="closeModal('settingsModal')">Cancel</button>
-      <button class="primary-btn" onclick="saveSettings()">Save Settings</button>
     </div>
   </div>
-</div>
 
-<!-- Voice Call Modal -->
-<div class="modal-backdrop" id="callModal">
-  <div class="modal call-modal">
-    <div class="call-avatar">
-      <div class="call-avatar-ring"></div>
-      <div class="call-avatar-ring call-avatar-ring2"></div>
-      <div class="call-avatar-icon">Y</div>
-    </div>
-    <h3 id="callStatus">YourAI</h3>
-    <p id="callSubStatus" style="color:var(--text-muted); font-size:0.875rem;">Tap mic to speak</p>
-    <div class="call-transcript" id="callTranscript"></div>
-    <div class="call-controls">
-      <button class="call-btn mute-btn" id="callMuteBtn" onclick="toggleCallMic()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      </button>
-      <button class="call-btn end-btn" onclick="endVoiceCall()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.43 9.88a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.54 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.67 8.65M18 2l-9 9"/></svg>
-      </button>
-      <button class="call-btn speaker-btn" id="callSpeakerBtn" onclick="toggleCallSpeaker()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
+  <!-- Notification Toast -->
+  <div class="toast" id="toast"></div>
 
-<!-- Notification Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- Optional: load config.js for GEMINI_API_KEY (copy from config.example.js) -->
-<script src="config.js"></script>
-<!-- CDN Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="dashboard.js"></script>
+  <!-- Optional: load config.js for GEMINI_API_KEY (copy from config.example.js) -->
+  <script src="config.js"></script>
+  <!-- CDN Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="dashboard.js"></script>
 </body>
+
 </html>

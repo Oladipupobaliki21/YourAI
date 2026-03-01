@@ -81,7 +81,7 @@ async function callGemini(messages, systemPrompt = '') {
   const apiKey = state.settings.apiKey;
   if (!apiKey) throw new Error('NO_API_KEY');
 
-  const model = state.settings.model || 'gemini-1.5-flash';
+  const model = state.settings.model || 'gemini-2.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   // Limit history to last 30 messages; filter empty; ensure valid role alternation
@@ -138,7 +138,7 @@ async function callGeminiStream(messages, systemPrompt = '', onChunk) {
   const apiKey = state.settings.apiKey;
   if (!apiKey) throw new Error('NO_API_KEY');
 
-  const model = state.settings.model || 'gemini-1.5-flash';
+  const model = state.settings.model || 'gemini-2.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
   const limited = messages.slice(-30).filter(m => m.content && String(m.content).trim());
@@ -190,19 +190,60 @@ async function callGeminiStream(messages, systemPrompt = '', onChunk) {
             fullText += text;
             onChunk(fullText);
           }
-        } catch {}
+        } catch { }
       }
     }
   }
   return fullText;
 }
 
-// ==================== IMAGE GENERATION ====================
-async function generateImageFromPrompt(prompt, style, width = 1024, height = 1024) {
+async function generateImageFromPrompt(prompt, style, aspectRatio = '1:1') {
+  const apiKey = state.settings.apiKey;
+  if (!apiKey) throw new Error('NO_API_KEY');
+
   const fullPrompt = style ? `${prompt}, ${style} style, high quality, detailed` : prompt;
-  const encoded = encodeURIComponent(fullPrompt);
-  // Pollinations.ai — free, no API key needed
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${Date.now()}`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-fast-generate-001:predict?key=${apiKey}`;
+
+  const body = {
+    instances: [
+      { prompt: fullPrompt }
+    ],
+    parameters: {
+      sampleCount: 1,
+      aspectRatio: aspectRatio
+    }
+  };
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (networkErr) {
+    throw new Error('Cannot reach Gemini Imagen API. Check your connection. ' + (networkErr.message || ''));
+  }
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    let msg = data?.error?.message || data?.error?.status || ('API error ' + res.status);
+    if (res.status === 400 && (String(msg).toLowerCase().includes('api_key') || String(msg).toLowerCase().includes('key'))) {
+      msg = 'Invalid or missing API key. Add your Gemini key in Settings.';
+    }
+    throw new Error(msg);
+  }
+
+  const base64Image = data.predictions?.[0]?.bytesBase64Encoded;
+  if (!base64Image) {
+    throw new Error('No image was returned from the API.');
+  }
+
+  // Determine mime type based on the API response, usually image/jpeg or image/png
+  const mimeType = data.predictions?.[0]?.mimeType || 'image/jpeg';
+  return `data:${mimeType};base64,${base64Image}`;
 }
 
 // ==================== SYSTEM PROMPTS ====================
@@ -398,7 +439,7 @@ function renderMarkdown(text) {
           return lang && hljs.getLanguage(lang)
             ? hljs.highlight(code, { language: lang }).value
             : hljs.highlightAuto(code).value;
-        } catch {}
+        } catch { }
       }
       return code;
     }
@@ -894,9 +935,7 @@ async function generateImage() {
   if (!prompt) { showToast('Describe your image first', 'error'); return; }
 
   const style = document.getElementById('imageStyle').value;
-  const ratio = document.getElementById('imageRatio').value.split('x');
-  const width = parseInt(ratio[0]);
-  const height = parseInt(ratio[1]);
+  const ratio = document.getElementById('imageRatio').value;
 
   const resultEl = document.getElementById('imageResult');
   resultEl.classList.remove('hidden');
@@ -908,7 +947,7 @@ async function generateImage() {
   `;
 
   try {
-    const imageUrl = await generateImageFromPrompt(prompt, style, width, height);
+    const imageUrl = await generateImageFromPrompt(prompt, style, ratio);
 
     // Pre-load image
     const img = new Image();

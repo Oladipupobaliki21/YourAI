@@ -22,7 +22,7 @@
 - Automatically saved to chat history
 
 ### 🎨 Image Generator
-- **Pollinations.ai** integration — completely free, no API key needed
+- **Google Gemini API** (Imagen 3) integration — high-quality image generation leveraging your API key
 - 8 art styles: Photorealistic, Digital Art, Anime, Oil Painting, Watercolor, Cyberpunk, Minimalist, 3D Render
 - Multiple aspect ratios (Square, Landscape, Portrait)
 - One-click download
@@ -118,8 +118,7 @@ YourAI/
 | **HTML5** | Semantic structure |
 | **CSS3** | Custom variables, Grid, Flexbox, Animations |
 | **Vanilla JavaScript** | App logic, API calls, State management |
-| **Google Gemini API** | AI chat, research, content generation |
-| **Pollinations.ai** | Free image generation |
+| **Google Gemini API** | AI chat, research, image generation, content generation |
 | **Web Speech API** | Voice input & text-to-speech |
 | **marked.js** | Markdown rendering |
 | **highlight.js** | Code syntax highlighting |
@@ -153,7 +152,6 @@ To add collaborators on GitHub:
 | Service | Key Required | Cost |
 |---------|-------------|------|
 | Gemini API | Yes (your own) | Free tier available |
-| Pollinations.ai | No | Completely free |
 | Web Speech API | No | Built into browsers |
 
 ---
@@ -166,7 +164,7 @@ To add collaborators on GitHub:
 - [x] Markdown rendering with code blocks
 - [x] Multi-model chat (Gemini Flash, Pro, 2.0)
 - [x] Voice call mode (hands-free conversation)
-- [x] Image generation (Pollinations.ai)
+- [x] Image generation (Gemini)
 - [x] Email drafting
 - [x] Video script writing
 - [x] Personal profile with AI analysis
