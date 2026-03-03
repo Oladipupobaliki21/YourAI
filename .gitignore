@@ -1,0 +1,15 @@
+# Local config with secrets (never commit)
+config.js
+run.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/launch.json
+
+# Logs
+*.log
+npm-debug.log*
